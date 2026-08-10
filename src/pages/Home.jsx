@@ -19,12 +19,11 @@ export default function Home() {
   const buttonRef = useRef(null);
   const [entering, setEntering] = useState(false);
   const [entered, setEntered] = useState(false);
-
   const particles = useMemo(() => PARTICLES, []);
 
   useEffect(() => {
     const hero = heroRef.current;
-    if (!hero) return undefined;
+    if (!hero || entered) return undefined;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(pointer: fine)').matches;
@@ -53,7 +52,7 @@ export default function Home() {
       hero.removeEventListener('pointermove', move);
       hero.removeEventListener('pointerleave', leave);
     };
-  }, []);
+  }, [entered]);
 
   const handleButtonMove = (event) => {
     if (!buttonRef.current || entering) return;
@@ -72,19 +71,69 @@ export default function Home() {
   };
 
   const enterPalimpsest = () => {
-    if (entering || entered) return;
+    if (entering) return;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     setEntering(true);
 
     window.setTimeout(() => {
       setEntered(true);
-      document.querySelector('#palimpsest-interface')?.scrollIntoView({ behavior: 'auto' });
-      window.setTimeout(() => setEntering(false), 80);
+      setEntering(false);
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     }, reduced ? 180 : 820);
   };
 
+  const returnToPortal = () => {
+    setEntered(false);
+    setEntering(false);
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  };
+
+  if (entered) {
+    return (
+      <main className="home home--inside">
+        <section className="portal-section" id="palimpsest-interface" aria-label="Palimpsest home">
+          <div className="portal-shell">
+            <button className="portal-return" type="button" onClick={returnToPortal}>
+              <span aria-hidden="true">◇</span>
+              <span>Return to portal</span>
+            </button>
+
+            <div className="portal-section__head">
+              <span className="portal-section__eyebrow">Palimpsest</span>
+              <h2>Choose a layer.</h2>
+              <p>
+                Learn the system, read cards in context, or return to the meanings you have
+                discovered over time.
+              </p>
+            </div>
+
+            <div className="portal-grid">
+              <SpotlightCard className="portal-tile">
+                <span className="portal-tile__number">I · LEARN</span>
+                <h3>Learn</h3>
+                <p>Follow the Fool’s Journey and understand suits, numbers, courts and reversals.</p>
+              </SpotlightCard>
+
+              <SpotlightCard className="portal-tile">
+                <span className="portal-tile__number">II · READ</span>
+                <h3>Read</h3>
+                <p>Interpret each position, then uncover the thread connecting the whole spread.</p>
+              </SpotlightCard>
+
+              <SpotlightCard className="portal-tile">
+                <span className="portal-tile__number">III · REFLECT</span>
+                <h3>Reflect</h3>
+                <p>Keep a private history of readings, notes and patterns that become personal.</p>
+              </SpotlightCard>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
-    <main className={`home ${entering ? 'is-entering' : ''} ${entered ? 'is-entered' : ''}`}>
+    <main className={`home ${entering ? 'is-entering' : ''}`}>
       <section className="hero" ref={heroRef} aria-label="Enter Palimpsest">
         <div className="hero__field" aria-hidden="true">
           <Dither
@@ -148,14 +197,14 @@ export default function Home() {
         <div className="portal-stage">
           <header className="portal-heading">
             <p className="portal-kicker">A symbolic space for learning and reading tarot</p>
-            <h1 className="wordmark" aria-label="Palimpsest">PALIMPSEST</h1>
+            <h1 className="wordmark">PALIMPSEST</h1>
             <p className="hero__tag">
               <span>Learn the symbols.</span>
               <span>Read the layers.</span>
             </p>
           </header>
 
-          <div className="portal-core" aria-hidden="false">
+          <div className="portal-core">
             <div className="portal-orbit portal-orbit--one" aria-hidden="true" />
             <div className="portal-orbit portal-orbit--two" aria-hidden="true" />
             <div className="hero__card-halo" aria-hidden="true" />
@@ -186,37 +235,6 @@ export default function Home() {
             </button>
             <p className="enter-hint">Pass through the card</p>
           </div>
-        </div>
-      </section>
-
-      <section className="portal-section" id="palimpsest-interface">
-        <div className="portal-section__head">
-          <span className="portal-section__eyebrow">Palimpsest</span>
-          <h2>Choose a layer.</h2>
-          <p>
-            Learn the system, read cards in context, or return to the meanings you have
-            discovered over time.
-          </p>
-        </div>
-
-        <div className="portal-grid">
-          <SpotlightCard className="portal-tile">
-            <span className="portal-tile__number">I · LEARN</span>
-            <h3>Learn</h3>
-            <p>Follow the Fool’s Journey and understand suits, numbers, courts and reversals.</p>
-          </SpotlightCard>
-
-          <SpotlightCard className="portal-tile">
-            <span className="portal-tile__number">II · READ</span>
-            <h3>Read</h3>
-            <p>Interpret each position, then uncover the thread connecting the whole spread.</p>
-          </SpotlightCard>
-
-          <SpotlightCard className="portal-tile">
-            <span className="portal-tile__number">III · REFLECT</span>
-            <h3>Reflect</h3>
-            <p>Keep a private history of readings, notes and patterns that become personal.</p>
-          </SpotlightCard>
         </div>
       </section>
     </main>
