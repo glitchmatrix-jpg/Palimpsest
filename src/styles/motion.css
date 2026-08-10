@@ -1,0 +1,12 @@
+@keyframes cardFloat {
+  0%,100% { transform: translateY(0) rotate(.2deg); }
+  50% { transform: translateY(-10px) rotate(-.2deg); }
+}
+@keyframes haloPulse {
+  0%,100% { transform: scale(.94); opacity: .65; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__card, .hero__card-halo { animation: none !important; }
+}

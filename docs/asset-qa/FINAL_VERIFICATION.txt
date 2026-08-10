@@ -1,0 +1,21 @@
+TAROT DECK COMPLETE — FINAL VERIFICATION
+
+Status: PASS
+
+Card fronts: 78
+Major Arcana: 22
+Cups: 14
+Swords: 14
+Wands: 14
+Pentacles: 14
+Front dimensions: 440 x 858 px
+Back dimensions: 440 x 858 px
+Interactive flip animation: present
+Rendered GIF demo: present
+
+All production checks passed.
+
+Animation display revision:
+- Rounded face masking added to both front and back faces in Animation.
+- Back face display tightened for a more card-like silhouette.
+- 21 The World replaced with a tighter-fit display/asset variant for improved visual consistency.

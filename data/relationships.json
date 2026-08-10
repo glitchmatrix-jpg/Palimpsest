@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "relationship_types": [
+    "reinforcement",
+    "contrast",
+    "progression",
+    "release",
+    "tension",
+    "repetition"
+  ],
+  "curated_relationships": []
+}

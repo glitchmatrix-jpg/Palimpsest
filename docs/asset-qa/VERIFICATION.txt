@@ -1,0 +1,34 @@
+FINAL TAROT DECK NORMALIZED — REWORKED WORLD AUDIT
+
+Status: PASS
+
+Counts:
+- Major Arcana: 22
+- Cups: 14
+- Pentacles: 14
+- Swords: 14
+- Wands: 14
+
+World correction applied:
+- File: Major_Arcana/21_The_World.png
+- Original source size: 195 x 324 px
+- Corrective source-side trim: 7 px left, 7 px right
+- Effective normalized source size: 181 x 324 px
+- Final placed size inside 440 x 858 canvas: 440 x 788 px
+- Scale factor: 2.430939
+- Final padding: horizontal 0 px, vertical 70 px
+
+Verification checks:
+- Exactly 78 normalized cards exist
+- Every card is exactly 440 x 858 px
+- Filenames remain unique
+- Major Arcana contains exactly 22 cards
+- Each suit contains exactly 14 cards
+- Full_Sheets folder preserved
+- Contact sheet regenerated after World rework
+- Audit CSV regenerated after World rework
+
+Animation display revision:
+- Rounded face masking added to both front and back faces in Animation.
+- Back face display tightened for a more card-like silhouette.
+- 21 The World replaced with a tighter-fit display/asset variant for improved visual consistency.

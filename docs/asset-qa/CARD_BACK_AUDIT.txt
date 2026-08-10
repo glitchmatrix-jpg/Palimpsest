@@ -1,0 +1,9 @@
+CARD BACK AUDIT
+Original dimensions: 898 x 1751
+Final dimensions: 440 x 858
+Scale factor: 0.48997773
+Placed image dimensions: 440 x 858
+Horizontal padding: 0 px total
+Vertical padding: 0 px total
+Full artwork preserved: YES
+Distortion introduced: NO

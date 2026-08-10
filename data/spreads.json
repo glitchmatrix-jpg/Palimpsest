@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "spreads": [
+    {
+      "id": "one_card",
+      "name": "One Card",
+      "relationship_model": "single",
+      "positions": [
+        {
+          "id": "focus",
+          "label": "Focus"
+        }
+      ]
+    },
+    {
+      "id": "past_present_future",
+      "name": "Past \u00b7 Present \u00b7 Future",
+      "relationship_model": "sequence",
+      "positions": [
+        {
+          "id": "past",
+          "label": "Past"
+        },
+        {
+          "id": "present",
+          "label": "Present"
+        },
+        {
+          "id": "future",
+          "label": "Future"
+        }
+      ],
+      "edges": [
+        {
+          "from": "past",
+          "to": "present",
+          "weight": 1.0
+        },
+        {
+          "from": "present",
+          "to": "future",
+          "weight": 1.0
+        },
+        {
+          "from": "past",
+          "to": "future",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "id": "situation_challenge_advice",
+      "name": "Situation \u00b7 Challenge \u00b7 Advice",
+      "relationship_model": "directed",
+      "positions": [
+        {
+          "id": "situation",
+          "label": "Situation"
+        },
+        {
+          "id": "challenge",
+          "label": "Challenge"
+        },
+        {
+          "id": "advice",
+          "label": "Advice"
+        }
+      ]
+    }
+  ]
+}

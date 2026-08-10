@@ -1,0 +1,40 @@
+* { box-sizing: border-box; }
+
+html {
+  background: var(--void);
+  color: var(--ivory);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--void);
+}
+
+button, input, textarea, select { font: inherit; }
+
+button { color: inherit; }
+
+a { color: inherit; }
+
+::selection {
+  background: var(--gold);
+  color: var(--void);
+}
+
+.serif {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

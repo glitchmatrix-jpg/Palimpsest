@@ -1,0 +1,4 @@
+.tilted-card-figure{position:relative;margin:0;perspective:900px;display:flex;align-items:center;justify-content:center}
+.tilted-card-inner{position:relative;transform-style:preserve-3d;will-change:transform}
+.tilted-card-img{display:block;width:100%;height:auto;border-radius:15px;will-change:transform;transform:translateZ(0)}
+@media (max-width:700px),(prefers-reduced-motion:reduce){.tilted-card-inner{transform:none!important}}
