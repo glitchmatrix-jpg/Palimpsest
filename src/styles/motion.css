@@ -24,56 +24,97 @@
   to { transform: translate(-50%, -50%) rotate(-383deg); }
 }
 
-@keyframes portalContentFade {
-  0% { opacity: 1; filter: blur(0); transform: scale(1); }
-  45% { opacity: .62; filter: blur(1px); }
-  100% { opacity: 0; filter: blur(7px); transform: scale(.94); }
+/* Final locked portal transition: one uninterrupted transform, no scale checkpoints. */
+.is-entering .portal-card-wrap {
+  animation: none !important;
+  transform: none !important;
+  transition: none !important;
 }
 
-@keyframes portalDive {
-  0% {
-    transform: translateY(0) scale(1) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
-    filter: brightness(1);
+.is-entering .portal-core {
+  animation: portalCoreSweep 1.45s cubic-bezier(.18,.78,.16,1) both !important;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.is-entering .portal-heading,
+.is-entering .hero__enter {
+  animation: portalTextDissolve 1.45s cubic-bezier(.2,.72,.18,1) both !important;
+  will-change: opacity, transform;
+}
+
+.is-entering .hero__field,
+.is-entering .hero__metal,
+.is-entering .hero__depth,
+.is-entering .hero__rays,
+.is-entering .hero__rings,
+.is-entering .hero__particles {
+  animation: portalBackdropDissolve 1.45s cubic-bezier(.2,.72,.18,1) both !important;
+  will-change: opacity;
+}
+
+.is-entering .portal-flash {
+  animation: portalLightBloom 1.45s cubic-bezier(.2,.72,.18,1) both !important;
+  will-change: opacity, transform;
+}
+
+@keyframes portalCoreSweep {
+  from {
+    transform: translate3d(0,0,0) scale(1);
   }
-  18% {
-    transform: translateY(-8px) scale(1.04) rotateX(0) rotateY(0);
-    filter: brightness(1.05);
+  to {
+    transform: translate3d(0,0,0) scale(9.2);
+  }
+}
+
+@keyframes portalTextDissolve {
+  from {
+    opacity: 1;
+    transform: translate3d(0,0,0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0,0,0) scale(.965);
+  }
+}
+
+@keyframes portalBackdropDissolve {
+  from { opacity: 1; }
+  to { opacity: .08; }
+}
+
+@keyframes portalLightBloom {
+  0% {
+    opacity: 0;
+    transform: translate3d(0,0,0) scale(.78);
   }
   58% {
-    transform: translateY(0) scale(2.3) rotateX(0) rotateY(0);
-    filter: brightness(1.2);
+    opacity: 0;
+    transform: translate3d(0,0,0) scale(.92);
   }
   100% {
-    transform: translateY(0) scale(7.8) rotateX(0) rotateY(0);
-    filter: brightness(1.55) blur(.2px);
+    opacity: 1;
+    transform: translate3d(0,0,0) scale(1.35);
   }
 }
 
-@keyframes metalDive {
-  0% { transform: translate(-50%, -45%) scale(.92); opacity: .8; }
-  42% { transform: translate(-50%, -45%) scale(1.08); opacity: 1; }
-  100% { transform: translate(-50%, -45%) scale(2.3); opacity: .1; }
+.inside-entry-wash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(255,250,237,.98) 0 18%, rgba(232,207,139,.9) 34%, rgba(113,67,164,.52) 58%, rgba(25,12,39,.08) 82%, transparent 100%),
+    rgba(255,248,234,.92);
+  animation: insideWashReveal .72s cubic-bezier(.22,.74,.2,1) both;
+  will-change: opacity;
 }
 
-@keyframes vortexDive {
-  0% { transform: scale(1); opacity: inherit; }
-  100% { transform: scale(1.85) rotate(13deg); opacity: 0; }
-}
-
-@keyframes portalFlash {
-  0%, 48% { opacity: 0; transform: scale(.5); }
-  72% { opacity: .34; transform: scale(1); }
-  100% { opacity: 1; transform: scale(1.5); }
-}
-
-@keyframes reducedPortalFade {
+@keyframes insideWashReveal {
   from { opacity: 1; }
   to { opacity: 0; }
-}
-
-@keyframes reducedFlash {
-  from { opacity: 0; }
-  to { opacity: .82; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -82,5 +123,22 @@
   .portal-particle,
   .portal-orbit {
     animation: none;
+  }
+
+  .is-entering .portal-core,
+  .is-entering .portal-heading,
+  .is-entering .hero__enter,
+  .is-entering .hero__field,
+  .is-entering .hero__metal,
+  .is-entering .hero__depth,
+  .is-entering .hero__rays,
+  .is-entering .hero__rings,
+  .is-entering .hero__particles,
+  .is-entering .portal-flash {
+    animation-duration: .22s !important;
+  }
+
+  .inside-entry-wash {
+    animation-duration: .22s;
   }
 }
