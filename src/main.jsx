@@ -5,6 +5,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/home.css';
 import './styles/motion.css';
+import './styles/portal-transition.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
