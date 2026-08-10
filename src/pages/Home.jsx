@@ -17,13 +17,28 @@ const PARTICLES = [
 export default function Home() {
   const heroRef = useRef(null);
   const buttonRef = useRef(null);
+  const transitionTimerRef = useRef(null);
   const [entering, setEntering] = useState(false);
   const [entered, setEntered] = useState(false);
+  const [transitionPrep, setTransitionPrep] = useState(false);
+  const [coarseMotion, setCoarseMotion] = useState(false);
   const particles = useMemo(() => PARTICLES, []);
 
   useEffect(() => {
+    const query = window.matchMedia('(pointer: coarse), (max-width: 600px)');
+    const sync = () => setCoarseMotion(query.matches);
+    sync();
+    query.addEventListener?.('change', sync);
+    return () => query.removeEventListener?.('change', sync);
+  }, []);
+
+  useEffect(() => () => {
+    if (transitionTimerRef.current) window.clearTimeout(transitionTimerRef.current);
+  }, []);
+
+  useEffect(() => {
     const hero = heroRef.current;
-    if (!hero || entered) return undefined;
+    if (!hero || entered || transitionPrep) return undefined;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(pointer: fine)').matches;
@@ -52,10 +67,10 @@ export default function Home() {
       hero.removeEventListener('pointermove', move);
       hero.removeEventListener('pointerleave', leave);
     };
-  }, [entered]);
+  }, [entered, transitionPrep]);
 
   const handleButtonMove = (event) => {
-    if (!buttonRef.current || entering) return;
+    if (!buttonRef.current || entering || transitionPrep) return;
     if (!window.matchMedia('(pointer: fine)').matches) return;
     const rect = buttonRef.current.getBoundingClientRect();
     const x = (event.clientX - rect.left - rect.width / 2) * 0.055;
@@ -70,21 +85,47 @@ export default function Home() {
     buttonRef.current.style.setProperty('--mag-y', '0px');
   };
 
-  const enterPalimpsest = () => {
-    if (entering) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setEntering(true);
-
-    window.setTimeout(() => {
+  const finishEntry = (duration) => {
+    transitionTimerRef.current = window.setTimeout(() => {
       setEntered(true);
       setEntering(false);
+      setTransitionPrep(false);
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    }, reduced ? 220 : 1450);
+    }, duration);
+  };
+
+  const enterPalimpsest = () => {
+    if (entering || transitionPrep) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduced) {
+      setEntering(true);
+      finishEntry(220);
+      return;
+    }
+
+    if (coarseMotion) {
+      // Give mobile browsers two clean frames to drop the WebGL canvases before
+      // beginning the compositor-only card transform.
+      setTransitionPrep(true);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setEntering(true);
+          finishEntry(1320);
+        });
+      });
+      return;
+    }
+
+    setEntering(true);
+    finishEntry(1450);
   };
 
   const returnToPortal = () => {
+    if (transitionTimerRef.current) window.clearTimeout(transitionTimerRef.current);
     setEntered(false);
     setEntering(false);
+    setTransitionPrep(false);
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
@@ -133,43 +174,49 @@ export default function Home() {
     );
   }
 
+  const suspendWebGL = transitionPrep && coarseMotion;
+
   return (
-    <main className={`home ${entering ? 'is-entering' : ''}`}>
+    <main className={`home ${transitionPrep ? 'is-transition-prep' : ''} ${entering ? 'is-entering' : ''}`}>
       <section className="hero" ref={heroRef} aria-label="Enter Palimpsest">
         <div className="hero__field" aria-hidden="true">
-          <Dither
-            waveColor={[0.43, 0.19, 0.68]}
-            disableAnimation={entering}
-            enableMouseInteraction={!entering}
-            mouseRadius={0.3}
-            colorNum={5}
-            pixelSize={2}
-            waveAmplitude={0.32}
-            waveFrequency={2.7}
-            waveSpeed={0.04}
-          />
+          {!suspendWebGL && (
+            <Dither
+              waveColor={[0.43, 0.19, 0.68]}
+              disableAnimation={entering}
+              enableMouseInteraction={!entering}
+              mouseRadius={0.3}
+              colorNum={5}
+              pixelSize={2}
+              waveAmplitude={0.32}
+              waveFrequency={2.7}
+              waveSpeed={0.04}
+            />
+          )}
         </div>
 
         <div className="hero__metal" aria-hidden="true">
-          <MoltenMetal
-            color1="#1B0C2E"
-            color2="#6F3FA8"
-            color3="#D6B45C"
-            speed={0.2}
-            scale={4.6}
-            detail={3}
-            glow={1.45}
-            coreSize={0.08}
-            swirl={0.9}
-            fold={-0.18}
-            blackPoint={0.07}
-            brightness={1.15}
-            grain
-            grainIntensity={0.03}
-            mouseInteraction={!entering}
-            mouseStrength={0.18}
-            opacity={0.88}
-          />
+          {!suspendWebGL && (
+            <MoltenMetal
+              color1="#1B0C2E"
+              color2="#6F3FA8"
+              color3="#D6B45C"
+              speed={0.2}
+              scale={4.6}
+              detail={3}
+              glow={1.45}
+              coreSize={0.08}
+              swirl={0.9}
+              fold={-0.18}
+              blackPoint={0.07}
+              brightness={1.15}
+              grain
+              grainIntensity={0.03}
+              mouseInteraction={!entering}
+              mouseStrength={0.18}
+              opacity={0.88}
+            />
+          )}
         </div>
 
         <div className="hero__depth hero__depth--far" aria-hidden="true" />
@@ -230,7 +277,7 @@ export default function Home() {
               onClick={enterPalimpsest}
               onPointerMove={handleButtonMove}
               onPointerLeave={resetButton}
-              disabled={entering}
+              disabled={entering || transitionPrep}
             >
               <span>Enter Palimpsest</span>
               <span className="enter-button__glyph" aria-hidden="true">◇</span>
