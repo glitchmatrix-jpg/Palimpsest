@@ -79,7 +79,7 @@ export default function Home() {
       setEntered(true);
       setEntering(false);
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    }, reduced ? 180 : 820);
+    }, reduced ? 220 : 1650);
   };
 
   const returnToPortal = () => {
