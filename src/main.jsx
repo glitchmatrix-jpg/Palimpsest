@@ -4,6 +4,7 @@ import App from './App';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/home.css';
+import './styles/portal-visuals.css';
 import './styles/motion.css';
 import './styles/portal-transition.css';
 
