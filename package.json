@@ -1,27 +1,27 @@
-﻿{
-    "name":  "palimpsest",
-    "private":  true,
-    "version":  "0.1.0",
-    "type":  "module",
-    "scripts":  {
-                    "dev":  "vite",
-                    "build":  "vite build",
-                    "preview":  "vite preview"
-                },
-    "dependencies":  {
-                         "@gsap/react":  "^2.1.2",
-                         "@react-three/fiber":  "^9.7.0",
-                         "@react-three/postprocessing":  "^3.0.5",
-                         "gsap":  "^3.13.0",
-                         "motion":  "^12.23.12",
-                         "ogl":  "^1.0.11",
-                         "postprocessing":  "^6.37.8",
-                         "react":  "^19.1.1",
-                         "react-dom":  "^19.1.1",
-                         "three":  "^0.182.0"
-                     },
-    "devDependencies":  {
-                            "@vitejs/plugin-react":  "^5.0.2",
-                            "vite":  "^7.1.2"
-                        }
+{
+  "name": "palimpsest",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@react-three/fiber": "^9.7.0",
+    "@react-three/postprocessing": "^3.0.5",
+    "gsap": "^3.13.0",
+    "motion": "^12.23.12",
+    "ogl": "^1.0.11",
+    "postprocessing": "^6.37.8",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "three": "^0.182.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.2",
+    "vite": "^7.1.2"
+  }
 }
