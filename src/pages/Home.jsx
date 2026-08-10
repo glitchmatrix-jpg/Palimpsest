@@ -79,7 +79,7 @@ export default function Home() {
       setEntered(true);
       setEntering(false);
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    }, reduced ? 220 : 1650);
+    }, reduced ? 220 : 1450);
   };
 
   const returnToPortal = () => {
@@ -91,6 +91,7 @@ export default function Home() {
   if (entered) {
     return (
       <main className="home home--inside">
+        <div className="inside-entry-wash" aria-hidden="true" />
         <section className="portal-section" id="palimpsest-interface" aria-label="Palimpsest home">
           <div className="portal-shell">
             <button className="portal-return" type="button" onClick={returnToPortal}>
@@ -138,7 +139,8 @@ export default function Home() {
         <div className="hero__field" aria-hidden="true">
           <Dither
             waveColor={[0.43, 0.19, 0.68]}
-            enableMouseInteraction
+            disableAnimation={entering}
+            enableMouseInteraction={!entering}
             mouseRadius={0.3}
             colorNum={5}
             pixelSize={2}
@@ -164,7 +166,7 @@ export default function Home() {
             brightness={1.15}
             grain
             grainIntensity={0.03}
-            mouseInteraction
+            mouseInteraction={!entering}
             mouseStrength={0.18}
             opacity={0.88}
           />
