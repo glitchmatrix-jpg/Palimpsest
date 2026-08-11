@@ -114,8 +114,6 @@ export default function Home() {
       return;
     }
 
-    // Both desktop and mobile receive a painted scale(1) preparation frame before
-    // the dive begins. Mobile additionally drops WebGL while transitionPrep is true.
     beginPreparedDive(coarseMotion ? 1320 : 1450);
   };
 
@@ -173,6 +171,10 @@ export default function Home() {
   }
 
   const suspendWebGL = transitionPrep && coarseMotion;
+  const ditherColor = coarseMotion ? [0.30, 0.055, 0.36] : [0.50, 0.21, 0.78];
+  const moltenPalette = coarseMotion
+    ? { color1: '#0D0715', color2: '#4A1F68', color3: '#C9A85F' }
+    : { color1: '#1A092C', color2: '#7541AF', color3: '#E0BD61' };
 
   return (
     <main className={`home ${transitionPrep ? 'is-transition-prep' : ''} ${entering ? 'is-entering' : ''}`}>
@@ -180,15 +182,15 @@ export default function Home() {
         <div className="hero__field" aria-hidden="true">
           {!suspendWebGL && (
             <Dither
-              waveColor={[0.50, 0.21, 0.78]}
+              waveColor={ditherColor}
               disableAnimation={entering}
               enableMouseInteraction={!entering}
               mouseRadius={0.3}
-              colorNum={4}
+              colorNum={coarseMotion ? 5 : 4}
               pixelSize={2}
-              waveAmplitude={0.35}
-              waveFrequency={2.55}
-              waveSpeed={0.026}
+              waveAmplitude={coarseMotion ? 0.30 : 0.35}
+              waveFrequency={coarseMotion ? 2.35 : 2.55}
+              waveSpeed={coarseMotion ? 0.020 : 0.026}
             />
           )}
         </div>
@@ -196,23 +198,23 @@ export default function Home() {
         <div className="hero__metal" aria-hidden="true">
           {!suspendWebGL && (
             <MoltenMetal
-              color1="#1A092C"
-              color2="#7541AF"
-              color3="#E0BD61"
-              speed={0.14}
-              scale={5.15}
+              color1={moltenPalette.color1}
+              color2={moltenPalette.color2}
+              color3={moltenPalette.color3}
+              speed={coarseMotion ? 0.11 : 0.14}
+              scale={coarseMotion ? 5.45 : 5.15}
               detail={3}
-              glow={1.55}
+              glow={coarseMotion ? 1.36 : 1.55}
               coreSize={0.075}
-              swirl={0.72}
+              swirl={coarseMotion ? 0.62 : 0.72}
               fold={-0.16}
-              blackPoint={0.075}
-              brightness={1.18}
+              blackPoint={coarseMotion ? 0.095 : 0.075}
+              brightness={coarseMotion ? 1.02 : 1.18}
               grain
-              grainIntensity={0.024}
+              grainIntensity={coarseMotion ? 0.018 : 0.024}
               mouseInteraction={!entering}
               mouseStrength={0.14}
-              opacity={0.9}
+              opacity={coarseMotion ? 0.72 : 0.9}
             />
           )}
         </div>
