@@ -1,3 +1,5 @@
+import { buildPairRelation } from './combinationIntelligence.js';
+
 const SUIT_DOMAINS = {
   Cups: 'feelings, relationships, attachment, pleasure and emotional needs',
   Swords: 'thought, communication, conflict, fear, decisions and truth',
@@ -116,28 +118,17 @@ function positionReading(entry, position) {
 
   const readings = {
     Past: `In the past, ${display} points to a period shaped by ${theme}. ${meaning} What matters now is how living through ${theme} taught you what to expect, tolerate, protect or repeat, because some of those habits or assumptions may still be feeding the present. ${major}`,
-
     Present: `Right now, ${display} puts ${theme} in the foreground. ${meaning} That makes ${theme} the active pressure, opportunity or pattern to deal with before you worry about what comes next. ${major}`,
-
     Future: `Looking ahead, ${display} suggests the current path is moving toward ${theme}. ${meaning} If nothing important changes, ${theme} is the kind of outcome or atmosphere that becomes more likely. Treat ${theme} as a direction you can still influence, not a fixed prediction. ${major}`,
-
-    Situation: `${display} says the situation itself is organized around ${theme}. ${meaning} Before trying to solve it, get clear on how ${theme} is actually operating; that is the condition the other cards are responding to and the part you would have to understand correctly for any response to work.` ,
-
-    Challenge: `${display} makes ${theme} the point of friction. ${meaning} In this position, ask where ${theme} is costing energy, narrowing your options, distorting judgment or making a necessary response harder to carry out. The challenge is to deal with the pressure created by ${theme} directly rather than fighting the card’s label.` ,
-
+    Situation: `${display} says the situation itself is organized around ${theme}. ${meaning} Before trying to solve it, get clear on how ${theme} is actually operating; that is the condition the other cards are responding to and the part you would have to understand correctly for any response to work.`,
+    Challenge: `${display} makes ${theme} the point of friction. ${meaning} In this position, ask where ${theme} is costing energy, narrowing your options, distorting judgment or making a necessary response harder to carry out. The challenge is to deal with the pressure created by ${theme} directly rather than fighting the card’s label.`,
     Advice: `As advice, ${display} points you toward ${theme}. ${meaning} ${suit || `Turn ${theme} into one concrete response: a decision, boundary, conversation, pause or next step you can actually carry out.`} ${court}`,
-
     Mind: `Mentally, ${display} suggests you are approaching this through ${theme}. ${meaning} ${suit || `This is likely shaping what you expect, what you keep returning to, and which possibilities you take seriously.`} The useful check is whether ${theme} is helping you see the situation more clearly or narrowing what you are willing to reconsider. ${court} ${major}`,
-
     Body: `In your lived, day-to-day reality, ${display} points to ${theme}. ${meaning} ${suit || `Look at what your energy, routines, behaviour, workload, environment and capacity are already showing you.`} With ${theme} in the Body position, give more weight to what is actually happening than to what you intend or believe should be happening. ${court} ${major}`,
-
     Spirit: `Underneath the practical details, ${display} raises a deeper question about ${theme}. ${meaning} ${suit || `At this level, the card is less about one event and more about the value, identity or definition of a meaningful life that the situation is forcing you to examine.`} Ask what living with ${theme} would require from your values when nobody else is choosing for you. ${court} ${major}`,
-
-    You: `On your side of the dynamic, ${display} shows ${theme} in the stance you are bringing. ${meaning} You may be trying to create, protect, avoid or control something through ${theme}. Pay attention to how a stance built around ${theme} changes the exchange, especially where it feels so familiar that you barely notice you are doing it.` ,
-
-    Them: `From the outside, ${display} suggests the other person is showing ${theme}. ${meaning} Keep the ${theme} interpretation tied to what they actually do, say, avoid or repeatedly choose. What matters is whether their observable behaviour consistently supports ${theme}; there is no need to invent private motives.` ,
-
-    Relationship: `Between you, ${display} suggests the relationship itself is operating through ${theme}. ${meaning} When ${theme} becomes the climate of the connection, look at what the interaction repeatedly produces when both sides meet. A recurring pattern of ${theme} matters more here than deciding which person deserves the label.` ,
+    You: `On your side of the dynamic, ${display} shows ${theme} in the stance you are bringing. ${meaning} You may be trying to create, protect, avoid or control something through ${theme}. Pay attention to how a stance built around ${theme} changes the exchange, especially where it feels so familiar that you barely notice you are doing it.`,
+    Them: `From the outside, ${display} suggests the other person is showing ${theme}. ${meaning} Keep the ${theme} interpretation tied to what they actually do, say, avoid or repeatedly choose. What matters is whether their observable behaviour consistently supports ${theme}; there is no need to invent private motives.`,
+    Relationship: `Between you, ${display} suggests the relationship itself is operating through ${theme}. ${meaning} When ${theme} becomes the climate of the connection, look at what the interaction repeatedly produces when both sides meet. A recurring pattern of ${theme} matters more here than deciding which person deserves the label.`,
   };
 
   return clean((readings[position] || `${display} emphasizes ${theme}. ${meaning}`).replace(/\s+/g, ' '));
@@ -153,68 +144,8 @@ export function buildCardRead(entry, position, question='') {
   };
 }
 
-const NAMED_PAIRS = {
-  'The Moon|The Sun': {
-    type: 'contrast', axis: 'uncertainty → clarity',
-    text: 'The Moon and the Sun are almost a built-in before-and-after. Something that was ambiguous, hidden, feared, or difficult to name becomes visible enough to deal with directly. The important part is not that confusion magically disappears; it is that better information changes what becomes possible.'
-  },
-  'The Tower|The Star': {
-    type: 'recovery', axis: 'collapse → reorientation',
-    text: 'The Tower strips away a structure that can no longer hold. The Star follows by asking what is still worth believing in once the shock has passed. This is recovery with evidence, not blind optimism.'
-  },
-  'Death|Temperance': {
-    type: 'integration', axis: 'ending → re-composition',
-    text: 'Death ends an arrangement; Temperance works with what remains. Together they describe the shift from accepting that something is over to finding a new balance that actually fits the changed reality.'
-  },
-  'The Devil|The Tower': {
-    type: 'exposure', axis: 'attachment → rupture',
-    text: 'The Devil names what has leverage over you; the Tower removes the structure that made that leverage sustainable. What was tolerated, rationalized, or hidden becomes much harder to maintain.'
-  },
-  'The Hermit|Wheel of Fortune': {
-    type: 'adaptation', axis: 'reflection → change',
-    text: 'The Hermit clarifies your own direction; the Wheel reminds you that circumstances still move. The pair asks whether your inner clarity is strong enough to survive a change you did not control.'
-  },
-  'The Lovers|The Chariot': {
-    type: 'commitment', axis: 'choice → direction',
-    text: 'The Lovers makes the choice meaningful; the Chariot makes it operational. A value or commitment only becomes real when your behaviour can be coordinated around it.'
-  },
-  'The Hanged Man|Death': {
-    type: 'release', axis: 'reframe → ending',
-    text: 'The Hanged Man changes how you see the situation; Death asks what must actually end once that old perspective no longer works. Insight becomes consequence.'
-  },
-};
-
-function relationBetween(a, b) {
-  const aKey = primaryKeyword(a);
-  const bKey = primaryKeyword(b);
-  const named = NAMED_PAIRS[`${a.card.name}|${b.card.name}`] || NAMED_PAIRS[`${b.card.name}|${a.card.name}`];
-  if (named) return named;
-
-  if (a.card.suit && a.card.suit === b.card.suit) {
-    return {
-      type: 'same domain', axis: `${aKey} → ${bKey}`,
-      text: `Both cards are ${a.card.suit}, so the story stays in the same part of life: ${SUIT_DOMAINS[a.card.suit]}. ${a.card.name} establishes ${aKey}; ${b.card.name} shows what that same domain looks like once it develops into ${bKey}.`
-    };
-  }
-
-  if (a.card.arcana === 'Major' && b.card.arcana === 'Major') {
-    return {
-      type: 'major transition', axis: `${aKey} → ${bKey}`,
-      text: `${a.card.name} moving into ${b.card.name} makes this feel bigger than a passing mood. The first card establishes a stance or life lesson around ${aKey}; the second asks what happens when that develops into ${bKey}.`
-    };
-  }
-
-  if (a.orientation !== b.orientation) {
-    return {
-      type: 'shift in expression', axis: `${aKey} → ${bKey}`,
-      text: `The spread moves from ${aKey} to ${bKey}, but the orientation changes as well. That suggests the issue is not only changing subject; it is changing how openly or cleanly it can be expressed.`
-    };
-  }
-
-  return {
-    type: 'progression', axis: `${aKey} → ${bKey}`,
-    text: `${a.card.name} sets up ${aKey}; ${b.card.name} follows with ${bKey}. Read them as cause and development: the first creates the conditions in which the second becomes the next thing you have to deal with.`
-  };
+function relationBetween(a, b, fromPosition, toPosition) {
+  return buildPairRelation(a, b, fromPosition, toPosition);
 }
 
 function buildLayers(entries) {
@@ -284,20 +215,32 @@ function storySentence(cards, positions, question) {
   return `${lead}${a.card.name} describes your side, ${b.card.name} describes the other side, and ${c.card.name} shows the pattern the connection is producing between you.`;
 }
 
+function threadParagraph(cards, relations) {
+  const active = relations.filter((relation) => relation.interesting);
+  const trajectory = `${cards[0].keyword} → ${cards[1].keyword} → ${cards[2].keyword}`;
+  if (active.length === 2) {
+    return `The visible movement is ${trajectory}. ${active[0].text} ${active[1].text}`;
+  }
+  if (active.length === 1) {
+    return `The visible movement is ${trajectory}, but only one adjacent pair forms a strong direct relationship. ${active[0].text} The other pair is better left as two separate positional meanings than forced into a connection the cards do not strongly support.`;
+  }
+  return `The visible movement is ${trajectory}, but neither adjacent pair forms a strong enough direct relationship to deserve a Thread interpretation. Keep the three positional meanings separate here; similarity of placement, suit or orientation is not enough reason to manufacture a story between them.`;
+}
+
 function synthesisParagraphs(cards, relations, positions, question) {
   const [a,b,c] = cards;
   const p1 = storySentence(cards, positions, question);
-  const p2 = `The story itself is ${a.keyword} → ${b.keyword} → ${c.keyword}. ${relations[0].text} Then ${relations[1].text}`;
+  const p2 = threadParagraph(cards, relations);
 
   let p3;
   if (positions.join('|') === 'Past|Present|Future') {
     p3 = `Put simply: the past brought you into ${a.keyword}, the present is asking you to deal with ${b.keyword}, and the future card suggests that ${c.keyword} becomes increasingly important if this course continues. The future is not fixed; ${c.card.name} is showing the kind of outcome your current choices are making more plausible.`;
   } else if (positions.join('|') === 'Situation|Challenge|Advice') {
-    p3 = `Put simply: the problem is not just ${a.keyword}. The real difficulty is ${b.keyword}, and ${c.card.name} suggests that progress comes from working consciously with ${c.keyword} rather than trying to bypass the challenge.`;
+    p3 = `Put simply: the situation centers on ${a.keyword}, the real difficulty is ${b.keyword}, and ${c.card.name} offers ${c.keyword} as the response to test. Whether the pair relationships are strong or weak, the positional logic still matters.`;
   } else if (positions.join('|') === 'Mind|Body|Spirit') {
-    p3 = `Put simply: what you think is happening, what you are actually living, and what the situation means to you may not be perfectly aligned. The useful work is to notice where ${a.keyword}, ${b.keyword}, and ${c.keyword} support each other — and where one is pulling against the others.`;
+    p3 = `Put simply: what you think is happening, what you are actually living, and what the situation means to you may not be perfectly aligned. The useful work is to notice where ${a.keyword}, ${b.keyword}, and ${c.keyword} genuinely support or challenge one another — without assuming every transition must contain a hidden message.`;
   } else {
-    p3 = `Put simply: this is not only about what either person wants. ${c.card.name} shows what the interaction itself is becoming. If that pattern is not what you want, changing your own side of the loop is the part you can act on directly.`;
+    p3 = `Put simply: ${a.card.name} describes your side, ${b.card.name} describes the other person's observable side, and ${c.card.name} describes the relationship pattern. Where The Thread finds a strong connection, use it; where it does not, do not substitute mind-reading or a neat story for evidence.`;
   }
   return [p1,p2,p3];
 }
@@ -334,7 +277,10 @@ function buildReflection(cards, positions) {
 
 export function buildDeepReading(entries, positions, question='') {
   const cards = entries.map((entry,index)=>buildCardRead(entry,positions[index],question));
-  const relations = [relationBetween(entries[0],entries[1]), relationBetween(entries[1],entries[2])];
+  const relations = [
+    relationBetween(entries[0],entries[1],positions[0],positions[1]),
+    relationBetween(entries[1],entries[2],positions[1],positions[2]),
+  ];
   const synthesis = synthesisParagraphs(cards,relations,positions,question);
   return {
     cards,
