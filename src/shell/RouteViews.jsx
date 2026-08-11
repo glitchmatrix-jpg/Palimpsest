@@ -1,8 +1,9 @@
-import { CardFrame, SectionEyebrow } from '../components/ui/Primitives';
+import { SectionEyebrow } from '../components/ui/Primitives';
 import CardLibrary from '../components/cards/CardLibrary';
 import LearnCourse from '../components/learn/LearnCourse';
 import FoolsJourney from '../components/journey/FoolsJourney';
 import ReadExperience from '../components/read/ReadExperience61';
+import JournalExperience from '../components/journal/JournalExperience';
 import { usePalimpsestRouter } from './router';
 
 function PageIntro({ eyebrow, title, body, children }) {
@@ -52,11 +53,8 @@ export function ReadView() {
 export function JournalView() {
   return (
     <div className="shell-page shell-page--journal">
-      <PageIntro eyebrow="IV · Journal" title="Return to what the cards revealed." body="Your saved readings, reflections and personal notes will live here locally and privately." />
-      <CardFrame className="shell-journal-sheet">
-        <div><span>Reading archive</span><strong>Local-first</strong></div>
-        <p>Journal persistence arrives in a later phase. The shell is already prepared for the archive, filters and reading detail views.</p>
-      </CardFrame>
+      <PageIntro eyebrow="IV · Journal" title="Return to what the cards revealed." body="Saved readings live only in this browser unless you export them. Revisit the interpretation, add what happened afterward, and keep your own record without an account or cloud dependency." />
+      <JournalExperience />
     </div>
   );
 }
