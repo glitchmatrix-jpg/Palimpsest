@@ -22,16 +22,18 @@ function keywords(entry) {
   return source || [];
 }
 
-function baseMeaning(entry) {
-  return entry.orientation === 'reversed' ? entry.card.reversedMeaning : entry.card.meaning;
-}
-
 function naturalList(items=[]) {
   const values = items.filter(Boolean).slice(0, 3);
   if (!values.length) return 'the card’s central theme';
   if (values.length === 1) return values[0];
   if (values.length === 2) return `${values[0]} and ${values[1]}`;
   return `${values[0]}, ${values[1]} and ${values[2]}`;
+}
+
+function baseMeaning(entry) {
+  if (entry.orientation !== 'reversed') return entry.card.meaning;
+  if (entry.card.arcana === 'Major') return entry.card.reversedMeaning;
+  return `${entry.card.name} reversed brings ${naturalList(entry.card.reversed)} into focus.`;
 }
 
 function themePhrase(entry) {
@@ -61,12 +63,12 @@ function courtSentence(entry, position) {
 
 function majorSentence(entry, position) {
   if (entry.card.arcana !== 'Major') return '';
-  if (position === 'Past') return 'Because this is a Major Arcana card, that period may have changed how you understood yourself or the situation, not just what happened on one particular day.';
-  if (position === 'Present') return 'Because this is a Major Arcana card, the present issue may be asking for a broader shift in attitude, values or direction rather than a quick tactical fix.';
-  if (position === 'Future') return 'Because this is a Major Arcana card, the direction ahead may feel like a larger turning point or change of stance rather than a small practical development.';
-  if (position === 'Mind') return 'This may be more than a passing thought; it can describe a larger belief or worldview shaping how you interpret what is happening.';
-  if (position === 'Body') return 'Its effect may be broad enough to show up across several parts of daily life rather than one isolated habit.';
-  if (position === 'Spirit') return 'This strongly points toward identity, values, meaning or the kind of person you are trying to become.';
+  if (position === 'Past') return `Because ${entry.card.name} is Major Arcana, that period may have changed how you understood yourself or the situation, not just what happened on one particular day.`;
+  if (position === 'Present') return `${entry.card.name} being Major Arcana makes the present issue feel broader than a quick tactical problem; attitude, values or direction may be part of what is changing.`;
+  if (position === 'Future') return `${entry.card.name} being Major Arcana makes the direction ahead look more like a turning point or change of stance than a small practical development.`;
+  if (position === 'Mind') return `With ${entry.card.name} here, this may be more than a passing thought; it can describe a larger belief or worldview shaping how you interpret events.`;
+  if (position === 'Body') return `With ${entry.card.name} here, the effect may be broad enough to show up across several parts of daily life rather than one isolated habit.`;
+  if (position === 'Spirit') return `${entry.card.name} strongly points toward identity, values, meaning or the kind of person you are trying to become.`;
   return '';
 }
 
@@ -113,29 +115,29 @@ function positionReading(entry, position) {
   const suit = suitAngle(entry, position);
 
   const readings = {
-    Past: `In the past, ${display} points to a period shaped by ${theme}. ${meaning} The important part is what that period taught you to expect, tolerate, protect or repeat, because some of those habits or assumptions may still be feeding the present. ${major}`,
+    Past: `In the past, ${display} points to a period shaped by ${theme}. ${meaning} What matters now is how living through ${theme} taught you what to expect, tolerate, protect or repeat, because some of those habits or assumptions may still be feeding the present. ${major}`,
 
-    Present: `Right now, ${display} puts ${theme} in the foreground. ${meaning} This looks like the part of the situation that is actively asking for your attention now — not background noise, but the pressure, opportunity or pattern you are currently dealing with. ${major}`,
+    Present: `Right now, ${display} puts ${theme} in the foreground. ${meaning} That makes ${theme} the active pressure, opportunity or pattern to deal with before you worry about what comes next. ${major}`,
 
-    Future: `Looking ahead, ${display} suggests the current path is moving toward ${theme}. ${meaning} If nothing important changes, this is the kind of outcome or atmosphere that becomes more likely. Treat it as a direction you can still influence, not a fixed prediction. ${major}`,
+    Future: `Looking ahead, ${display} suggests the current path is moving toward ${theme}. ${meaning} If nothing important changes, ${theme} is the kind of outcome or atmosphere that becomes more likely. Treat ${theme} as a direction you can still influence, not a fixed prediction. ${major}`,
 
-    Situation: `${display} says the situation itself is organized around ${theme}. ${meaning} Before trying to solve it, start with that basic condition: it tells you what the rest of the spread is responding to and what you would have to understand correctly for any response to work.` ,
+    Situation: `${display} says the situation itself is organized around ${theme}. ${meaning} Before trying to solve it, get clear on how ${theme} is actually operating; that is the condition the other cards are responding to and the part you would have to understand correctly for any response to work.` ,
 
-    Challenge: `${display} makes ${theme} the point of friction. ${meaning} In this position, notice where that pattern is costing energy, narrowing your options, distorting judgment or making a necessary response harder to carry out. The challenge is to deal with that pressure directly rather than arguing with the card’s label.` ,
+    Challenge: `${display} makes ${theme} the point of friction. ${meaning} In this position, ask where ${theme} is costing energy, narrowing your options, distorting judgment or making a necessary response harder to carry out. The challenge is to deal with that specific pressure directly rather than fighting the label.` ,
 
-    Advice: `As advice, ${display} points you toward ${theme}. ${meaning} ${suit || 'Turn that into one concrete response: a decision, boundary, conversation, pause or next step you can actually carry out.'} ${court}`,
+    Advice: `As advice, ${display} points you toward ${theme}. ${meaning} ${suit || `Turn ${theme} into one concrete response: a decision, boundary, conversation, pause or next step you can actually carry out.`} ${court}`,
 
-    Mind: `Mentally, ${display} suggests you are approaching this through ${theme}. ${meaning} ${suit || 'This is likely shaping what you expect, what you keep returning to, and which possibilities you take seriously.'} The useful check is whether ${theme} is helping you see the situation more clearly or narrowing what you are willing to reconsider. ${court} ${major}`,
+    Mind: `Mentally, ${display} suggests you are approaching this through ${theme}. ${meaning} ${suit || `This is likely shaping what you expect, what you keep returning to, and which possibilities you take seriously.`} The useful check is whether ${theme} is helping you see the situation more clearly or narrowing what you are willing to reconsider. ${court} ${major}`,
 
-    Body: `In your lived, day-to-day reality, ${display} points to ${theme}. ${meaning} ${suit || 'Look at what your energy, routines, behaviour, workload, environment and capacity are already showing you.'} The body position asks for evidence in what is actually happening, not only in what you intend or believe. ${court} ${major}`,
+    Body: `In your lived, day-to-day reality, ${display} points to ${theme}. ${meaning} ${suit || `Look at what your energy, routines, behaviour, workload, environment and capacity are already showing you.`} With ${theme} in the Body position, give more weight to what is actually happening than to what you intend or believe should be happening. ${court} ${major}`,
 
-    Spirit: `Underneath the practical details, ${display} raises a deeper question about ${theme}. ${meaning} ${suit || 'At this level, the card is less about one event and more about the value, identity or definition of a meaningful life that the situation is forcing you to examine.'} Ask what this theme says about the standards you want to live by when nobody else is choosing for you. ${court} ${major}`,
+    Spirit: `Underneath the practical details, ${display} raises a deeper question about ${theme}. ${meaning} ${suit || `At this level, the card is less about one event and more about the value, identity or definition of a meaningful life that the situation is forcing you to examine.`} Ask what living with ${theme} would require from your values when nobody else is choosing for you. ${court} ${major}`,
 
-    You: `On your side of the dynamic, ${display} shows ${theme} in the stance you are bringing. ${meaning} This may be what you are trying to create, protect, avoid or control in the interaction. Pay special attention to the part of your contribution that feels so familiar that you may not notice how strongly it shapes the exchange.` ,
+    You: `On your side of the dynamic, ${display} shows ${theme} in the stance you are bringing. ${meaning} You may be trying to create, protect, avoid or control something through ${theme}. Pay attention to how that stance shapes the exchange, especially where it feels so familiar that you barely notice you are doing it.` ,
 
-    Them: `From the outside, ${display} suggests the other person is showing ${theme}. ${meaning} Keep this tied to what they actually do, say, avoid or repeatedly choose. The card describes the role their behaviour appears to be taking in the dynamic; it does not require guessing at private thoughts they have never expressed.` ,
+    Them: `From the outside, ${display} suggests the other person is showing ${theme}. ${meaning} Keep the ${theme} interpretation tied to what they actually do, say, avoid or repeatedly choose. Their observable behaviour is enough to read the role they appear to be taking here; there is no need to invent private motives.` ,
 
-    Relationship: `Between you, ${display} suggests the relationship itself is operating through ${theme}. ${meaning} This is the recurring pattern produced by the interaction — what tends to happen when both sides meet — even if neither person consciously intends to create it. Read the card as the climate of the connection, not as a verdict on either person.` ,
+    Relationship: `Between you, ${display} suggests the relationship itself is operating through ${theme}. ${meaning} When ${theme} becomes the climate of the connection, look at what the interaction repeatedly produces when both sides meet. That recurring pattern matters more here than deciding which person deserves the label.` ,
   };
 
   return clean((readings[position] || `${display} emphasizes ${theme}. ${meaning}`).replace(/\s+/g, ' '));
