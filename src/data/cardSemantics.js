@@ -25,10 +25,41 @@ const SUIT_THEMES = {
   Pentacles: { element:'Earth', domain:'practical life', themes:['work','resources','body','security','skill'] },
 };
 
+const SUIT_REVERSED_LENSES = {
+  Cups: 'emotional exchange, attachment, care or boundaries',
+  Swords: 'thought, communication, conflict or judgment',
+  Wands: 'pace, initiative, motivation or follow-through',
+  Pentacles: 'work, resources, routine, security or practical stability',
+};
+
+const REVERSED_STAGE_OPENERS = {
+  Ace: 'The opening is not flowing cleanly. A beginning can be present without having enough access, timing or support to take form.',
+  Two: 'The balance at the center of this card is unstable. A choice, pairing or tension between two forces is becoming harder to hold cleanly.',
+  Three: 'Development is being interrupted or pulled off course. Something that should be growing may be scattered, delayed or expressing itself unevenly.',
+  Four: 'A structure that should provide stability is becoming too loose, too rigid or difficult to trust. The issue is how the container is functioning, not simply whether it exists.',
+  Five: 'The disruption in this card is no longer producing useful movement. Friction may be turning inward, being avoided, or taking more energy than the situation deserves.',
+  Six: 'Adjustment is incomplete. The situation is trying to move toward a new balance, but something about the response, timing or exchange is not settling yet.',
+  Seven: 'The test is being handled defensively or without enough clarity. Discernment is still needed, but the current response may be exhausting more energy than it protects.',
+  Eight: 'Movement is disrupted rather than absent. Momentum exists, but it is not organizing itself into a clean direction.',
+  Nine: 'What has accumulated is becoming difficult to carry cleanly. The issue is close enough to culmination that strain, excess or defensiveness is easier to see.',
+  Ten: 'The cycle is overloaded or resisting closure. What should be completing may instead be spilling into excess, avoidance or unfinished responsibility.',
+  Page: 'The Page’s learning mode is distorted. Curiosity can become insecurity, mixed signals or experimentation without enough grounding.',
+  Knight: 'The Knight’s pursuit has lost proportion. Energy is still moving, but the direction, timing or commitment may be unreliable or too forceful.',
+  Queen: 'The Queen’s ability to sustain the suit is under strain. What is normally held with maturity may be overextended, internalized or difficult to regulate.',
+  King: 'The King’s directing function is out of balance. Authority, standards or self-command may be becoming rigid, detached or hard to use responsibly.',
+};
+
 function unique(items=[]){ return [...new Set(items.filter(Boolean))]; }
 function sentence(value=''){ const text=String(value||'').trim(); return text ? text.replace(/\s+/g,' ') : ''; }
 function first(items=[]){ return items?.[0] || 'the card’s central theme'; }
 function courtRank(card){ return ['Page','Knight','Queen','King'].find((rank)=>card.name.startsWith(`${rank} of `)) || null; }
+function naturalList(items=[]){
+  const values=items.filter(Boolean).slice(0,3);
+  if(values.length===0) return 'an uneven expression of the card';
+  if(values.length===1) return values[0];
+  if(values.length===2) return `${values[0]} and ${values[1]}`;
+  return `${values[0]}, ${values[1]} and ${values[2]}`;
+}
 
 function structureFor(card){
   if(card.arcana==='Major'){
@@ -67,6 +98,13 @@ function semanticThemes(card){
   if(number) themes.push(number.stage, ...number.theme.split(/, | and /));
   if(card.arcana==='Major') themes.push('identity','values','development','turning point');
   return unique(themes.map((item)=>String(item).trim().toLowerCase())).slice(0,18);
+}
+
+function reversedExplanation(card){
+  if(card.arcana==='Major') return sentence(card.reversedMeaning);
+  const opener=REVERSED_STAGE_OPENERS[card.rank] || 'The card’s usual expression is not flowing cleanly.';
+  const lens=SUIT_REVERSED_LENSES[card.suit] || 'the part of life represented by this suit';
+  return sentence(`${opener} In ${card.suit}, watch for ${naturalList(card.reversed)} in ${lens}.`);
 }
 
 function practicalGuidance(card){
@@ -124,7 +162,7 @@ export function enrichCard(card){
   const questions=reflectionQuestions(card);
   return {
     ...card,
-    explanation:{ upright:sentence(card.meaning), reversed:sentence(card.reversedMeaning) },
+    explanation:{ upright:sentence(card.meaning), reversed:reversedExplanation(card) },
     practicalGuidance:guidance,
     questions,
     semanticThemes:semanticThemes(card),
