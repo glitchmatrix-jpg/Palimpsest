@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "audit:readings": "node scripts/audit_phase_6_2.mjs",
-    "audit:combinations": "node scripts/audit_phase_6_3.mjs",
+    "audit:combinations": "node scripts/audit_phase_6_3_pair_gate.mjs",
+    "audit:combinations:exhaustive": "node scripts/audit_phase_6_3.mjs",
     "audit:spreads": "node scripts/audit_phase_6_3_gate.mjs",
     "audit:spreads:exhaustive": "node scripts/audit_phase_6_3_triples.mjs",
     "audit:spread-systems": "node scripts/audit_phase_6_4.mjs",
