@@ -5,12 +5,9 @@ const SUIT_DOMAINS = {
   Pentacles: 'work, money, routine, health, security, skill and practical life',
 };
 
-const QUESTION_DOMAINS = [
-  { id: 'relationship', words: ['relationship','partner','love','dating','friend','friendship','marriage','boyfriend','girlfriend','him','her','them'], label: 'relationship' },
-  { id: 'work', words: ['job','career','work','internship','boss','project','promotion','money','business'], label: 'work or career' },
-  { id: 'study', words: ['school','college','university','class','exam','study','degree','research'], label: 'study or academic life' },
-  { id: 'decision', words: ['choose','choice','decision','decide','option','should i','whether'], label: 'decision' },
-  { id: 'self', words: ['myself','identity','confidence','purpose','life','happening in my life','stuck','change'], label: 'personal life' },
+export const SUPPORTED_POSITIONS = [
+  'Past','Present','Future','Situation','Challenge','Advice',
+  'Mind','Body','Spirit','You','Them','Relationship',
 ];
 
 function clean(text='') { return String(text || '').trim(); }
@@ -29,61 +26,122 @@ function baseMeaning(entry) {
   return entry.orientation === 'reversed' ? entry.card.reversedMeaning : entry.card.meaning;
 }
 
-function detectQuestionDomain(question='') {
-  const q = question.toLowerCase();
-  return QUESTION_DOMAINS.find((domain) => domain.words.some((word) => q.includes(word))) || { id: 'general', label: 'your situation' };
+function naturalList(items=[]) {
+  const values = items.filter(Boolean).slice(0, 3);
+  if (!values.length) return 'the card’s central theme';
+  if (values.length === 1) return values[0];
+  if (values.length === 2) return `${values[0]} and ${values[1]}`;
+  return `${values[0]}, ${values[1]} and ${values[2]}`;
 }
 
-function suitSentence(entry) {
-  if (!entry.card.suit) return '';
-  const domain = SUIT_DOMAINS[entry.card.suit];
-  return `${entry.card.suit} keeps this grounded in ${domain}.`;
+function themePhrase(entry) {
+  return naturalList(keywords(entry));
 }
 
-function questionSentence(entry, question) {
-  if (!clean(question)) return '';
-  const domain = detectQuestionDomain(question);
-  const key = primaryKeyword(entry);
-  const byDomain = {
-    relationship: `In a relationship reading, that is most likely to show up through the way people communicate, protect themselves, seek closeness, set boundaries, or repeat the same interaction.` ,
-    work: `In work or career, look for this through responsibilities, authority, workload, opportunity, recognition, money, or the practical consequences of a decision.`,
-    study: `In academic life, this is likely to show up through preparation, confidence, feedback, workload, concentration, skill or the structure around your work.`,
-    decision: `For a decision, ${key} describes an important condition of the choice rather than a yes-or-no verdict.`,
-    self: `In a broad life reading, this is most useful where it is already producing a noticeable behaviour, tension or consequence.`,
-    general: '',
+function courtRank(card) {
+  return ['Page','Knight','Queen','King'].find((rank) => card.name.startsWith(`${rank} of `)) || null;
+}
+
+function courtSentence(entry, position) {
+  const rank = courtRank(entry.card);
+  if (!rank) return '';
+  const role = {
+    Page: 'learning, testing and asking questions',
+    Knight: 'pursuing something actively and committing energy to it',
+    Queen: 'embodying and sustaining the quality rather than merely trying it',
+    King: 'directing, managing and taking responsibility for the quality',
+  }[rank];
+
+  if (position === 'Mind') return `As a ${rank}, this is not a passive idea: it describes a mental style built around ${role}.`;
+  if (position === 'Body') return `As a ${rank}, the pattern is likely to show up through ${role} in your actual behaviour or capacity.`;
+  if (position === 'Spirit') return `As a ${rank}, the deeper lesson involves ${role} in a way that feels personally owned rather than theoretical.`;
+  if (position === 'Advice') return `The ${rank} makes the advice practical: ${role} is more useful here than waiting for certainty.`;
+  return '';
+}
+
+function majorSentence(entry, position) {
+  if (entry.card.arcana !== 'Major') return '';
+  if (position === 'Past') return 'Because this is a Major Arcana card, that period may have shaped more than one isolated event; it may have changed how you understood yourself or the situation.';
+  if (position === 'Present') return 'Because this is a Major Arcana card, the present issue may be asking for a broader shift in attitude, values or direction rather than a quick tactical fix.';
+  if (position === 'Future') return 'Because this is a Major Arcana card, the direction ahead may feel like a larger turning point or change of stance rather than a small practical development.';
+  if (position === 'Mind') return 'This may be more than a passing thought; it can describe a larger belief or worldview shaping how you interpret what is happening.';
+  if (position === 'Body') return 'Its effect may be broad enough to show up across several parts of daily life rather than one isolated habit.';
+  if (position === 'Spirit') return 'This is a strong signal that the deeper issue concerns identity, values, meaning or the kind of person you are trying to become.';
+  return '';
+}
+
+function suitAngle(entry, position) {
+  const suit = entry.card.suit;
+  if (!suit) return '';
+  const map = {
+    Mind: {
+      Cups: 'Your thinking may be colored by emotional expectations, attachment, hope, hurt or the need for connection.',
+      Swords: 'Pay attention to the story you are telling yourself, the facts you emphasize, and the conclusions you keep rehearsing.',
+      Wands: 'Your attention may be pulled toward momentum, possibility, urgency or what you want to make happen next.',
+      Pentacles: 'You may be prioritizing what feels practical, stable, efficient or sustainable, sometimes at the expense of reconsidering the plan itself.',
+    },
+    Body: {
+      Cups: 'In practice, look at emotional bandwidth, boundaries, rest, closeness and how much of other people’s emotional weight you are carrying.',
+      Swords: 'In practice, this can show up through tension, stress, difficult conversations, avoidance, overthinking or the physical cost of staying mentally activated.',
+      Wands: 'In practice, this is about energy and output: pace, workload, motivation, movement and whether your current level of effort is sustainable.',
+      Pentacles: 'This is especially literal here: routines, money, health, work, sleep, resources and the practical structure of everyday life all matter.',
+    },
+    Spirit: {
+      Cups: 'The deeper question is what you believe healthy care, intimacy and emotional honesty should look like.',
+      Swords: 'The deeper question is what truth, intellectual honesty or clear communication you are willing to live by.',
+      Wands: 'The deeper question is what deserves your energy and what kind of ambition or creative direction still feels alive to you.',
+      Pentacles: 'The deeper question is what security, competence, responsibility and a well-built life actually mean to you.',
+    },
+    Advice: {
+      Cups: 'Respond through emotional honesty: name the feeling, protect the boundary, or have the conversation instead of managing everything indirectly.',
+      Swords: 'Respond through clarity: identify the fact, ask the direct question, make the distinction, or say what needs to be said.',
+      Wands: 'Respond through deliberate movement: choose a direction and put energy behind it instead of waiting for motivation to become perfect.',
+      Pentacles: 'Respond practically: simplify the plan, improve the routine, check the resources, and make the next step concrete enough to repeat.',
+    },
   };
-  return byDomain[domain.id] || '';
+  return map[position]?.[suit] || '';
 }
 
-function positionReading(entry, position, question) {
+function positionReading(entry, position) {
   const card = entry.card.name;
-  const key = primaryKeyword(entry);
   const meaning = baseMeaning(entry);
+  const theme = themePhrase(entry);
   const reversed = entry.orientation === 'reversed';
-  const orientationPhrase = reversed
-    ? `Because it is reversed, the theme is less straightforward: it may be blocked, internalized, overdone, delayed, or expressed in a way that is no longer helping.`
-    : '';
+  const display = reversed ? `${card} reversed` : card;
+  const court = courtSentence(entry, position);
+  const major = majorSentence(entry, position);
+  const suit = suitAngle(entry, position);
 
-  const openings = {
-    Past: `In the past, ${card} suggests that ${key} played an important part in shaping where you are now. ${meaning} This looks less like a finished chapter than a background influence you may still be carrying forward.`,
-    Present: `Right now, ${card} puts the emphasis on ${key}. ${meaning} This is the card I would treat as the clearest description of what is actively demanding your attention in the present.`,
-    Future: `Looking ahead, ${card} points toward ${key}. ${meaning} Read this as the direction the current pattern is leaning toward, not as an unavoidable prediction.`,
-    Situation: `${card} describes the situation through ${key}. ${meaning} Before trying to fix anything, take this as the basic condition the rest of the spread is responding to.`,
-    Challenge: `The challenge is ${card}: ${key} is where the situation becomes difficult. ${meaning} This may be the obstacle itself, or the quality you need but are struggling to use cleanly.`,
-    Advice: `As advice, ${card} says to work consciously with ${key}. ${meaning} The useful part is not to imitate the card literally, but to bring its strongest quality into one concrete choice, conversation or boundary.`,
-    Mind: `In the Mind position, ${card} describes the lens through which you are interpreting events. ${meaning} ${key} may be shaping what you expect, fear, assume, or keep returning to mentally.`,
-    Body: `In the Body position, ${card} brings ${key} into lived reality. ${meaning} Look for this in your energy, habits, routines, workload, health, resources, environment, or what you are actually doing day to day.`,
-    Spirit: `In the Spirit position, ${card} points to the larger value or identity question underneath the immediate problem. ${meaning} ${key} may be showing you what principle, belief, or definition of a meaningful life is being tested.`,
-    You: `For you, ${card} describes the stance you are bringing into the dynamic. ${meaning} ${key} may show what you are seeking, protecting, avoiding, or contributing without fully realizing it.`,
-    Them: `For the other person, ${card} suggests a visible stance of ${key}. ${meaning} Keep this tied to what you can actually observe in their behaviour rather than assuming access to motives they have never stated.`,
-    Relationship: `For the relationship itself, ${card} shows a pattern of ${key}. ${meaning} This is less about either person individually and more about what the two of you repeatedly create together.`,
+  const readings = {
+    Past: `In the past, ${display} points to a period shaped by ${theme}. ${meaning} Whatever happened then matters because it helped create the habits, expectations, relationships or conditions that the present is still responding to. ${major}`,
+
+    Present: `Right now, ${display} puts ${theme} in the foreground. ${meaning} This is the part of the situation that looks active now — the pressure, opportunity or pattern that deserves your attention before you worry about what comes next. ${major}`,
+
+    Future: `Looking ahead, ${display} suggests the current path is moving toward ${theme}. ${meaning} If nothing important changes, this is the kind of outcome or atmosphere that becomes more likely. It is a direction, not a fixed sentence, so what you do in the present still matters. ${major}`,
+
+    Situation: `${display} says the situation is fundamentally about ${theme}. ${meaning} Before trying to solve anything, start here: this is the basic condition the other cards are reacting to, and it is probably the clearest description of what is actually going on.` ,
+
+    Challenge: `The difficulty here is ${theme}. ${display} shows where the situation catches, drains energy or becomes harder to handle cleanly. ${meaning} The challenge is not to “beat” this card; it is to recognize what this pattern is costing, distorting or preventing so you can respond to the real problem.` ,
+
+    Advice: `As advice, ${display} points you toward ${theme}. ${meaning} ${suit || 'Turn the card into one concrete response: a decision, boundary, conversation, pause or next step you can actually carry out.'} ${court}`,
+
+    Mind: `Mentally, ${display} suggests you are approaching this through ${theme}. ${meaning} ${suit || 'This is likely shaping what you expect, what you keep returning to, and which possibilities you take seriously.'} ${court} ${major}`,
+
+    Body: `In your lived, day-to-day reality, ${display} points to ${theme}. ${meaning} ${suit || 'Look at what your energy, routines, behaviour, workload, environment and capacity are already showing you.'} ${court} ${major}`,
+
+    Spirit: `Underneath the practical details, ${display} raises a deeper question about ${theme}. ${meaning} ${suit || 'At this level, the card is less about one event and more about the value, identity or definition of a meaningful life that the situation is forcing you to examine.'} ${court} ${major}`,
+
+    You: `On your side of the dynamic, ${display} shows ${theme} in the stance you are bringing. ${meaning} This may be what you are trying to create, protect, avoid or control in the interaction — including the part of your contribution that feels so normal to you that you barely notice it.` ,
+
+    Them: `From the outside, the other person may be showing ${theme}. ${meaning} Read this through what they actually do, say, avoid or repeatedly choose. The card can describe the role they appear to be taking in the dynamic without pretending to reveal private thoughts they have never expressed.` ,
+
+    Relationship: `Between you, ${display} suggests the relationship itself is operating through ${theme}. ${meaning} This is the recurring pattern created by the interaction — what the connection tends to produce when both sides meet — even if neither person is deliberately trying to create it.` ,
   };
 
-  const parts = [openings[position] || `${card} emphasizes ${key}. ${meaning}`, orientationPhrase, suitSentence(entry), questionSentence(entry, question)].filter(Boolean);
-  return parts.join(' ');
+  return clean((readings[position] || `${display} emphasizes ${theme}. ${meaning}`).replace(/\s+/g, ' '));
 }
 
-function buildCardRead(entry, position, question) {
+export function buildCardRead(entry, position, question='') {
   return {
     ...entry,
     position,
