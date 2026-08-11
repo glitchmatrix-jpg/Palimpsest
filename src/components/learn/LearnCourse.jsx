@@ -1,6 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const asset = (path) => `${import.meta.env.BASE_URL}${path}`;
+
+const COURSE_SECTIONS = [
+  ['learn-start', 'Start'],
+  ['learn-suits', 'Suits'],
+  ['learn-numbers', 'Numbers'],
+  ['learn-courts', 'Courts'],
+  ['learn-reversals', 'Reversals'],
+  ['learn-flow', 'Flow'],
+  ['learn-practice', 'Practice']
+];
 
 const SUITS = {
   Cups: {
@@ -168,9 +178,45 @@ function FlowLesson(){
 
 function Practice(){
   const [revealed,setRevealed]=useState(false);
-  return <section className="learn-section learn-practice"><LessonHeader kicker="07 · Practice" title="Read before you reveal.">Use the structure you just learned instead of reaching immediately for a memorized keyword.</LessonHeader><div className="practice-card"><div className="practice-card__prompt"><span>Try this</span><h3>Eight of Pentacles</h3><p>Before revealing the explanation, build it yourself:</p><ol><li>What domain does Pentacles describe?</li><li>What does Eight do structurally?</li><li>What meaning appears when you combine them?</li></ol><button onClick={()=>setRevealed(v=>!v)}>{revealed?'Hide synthesis':'Reveal synthesis'}</button></div><figure><img src={asset('cards/Minor_Arcana/Pentacles/08_Eight_of_Pentacles.png')} alt="Eight of Pentacles"/></figure>{revealed&&<div className="practice-card__answer"><span>Synthesis</span><p><b>Pentacles</b> gives us work, skill, resources and tangible practice. <b>Eight</b> gives us organized movement and mastery through repetition. Together: deliberate skill-building — the unglamorous, focused practice that turns effort into competence.</p><small>That is stronger than memorizing “apprenticeship” because you can reconstruct the idea even if the keyword disappears from memory.</small></div>}</div></section>
+  return <section className="learn-section learn-practice" id="learn-practice"><LessonHeader kicker="07 · Practice" title="Read before you reveal.">Use the structure you just learned instead of reaching immediately for a memorized keyword.</LessonHeader><div className="practice-card"><div className="practice-card__prompt"><span>Try this</span><h3>Eight of Pentacles</h3><p>Before revealing the explanation, build it yourself:</p><ol><li>What domain does Pentacles describe?</li><li>What does Eight do structurally?</li><li>What meaning appears when you combine them?</li></ol><button onClick={()=>setRevealed(v=>!v)}>{revealed?'Hide synthesis':'Reveal synthesis'}</button></div><figure><img src={asset('cards/Minor_Arcana/Pentacles/08_Eight_of_Pentacles.png')} alt="Eight of Pentacles"/></figure>{revealed&&<div className="practice-card__answer"><span>Synthesis</span><p><b>Pentacles</b> gives us work, skill, resources and tangible practice. <b>Eight</b> gives us organized movement and mastery through repetition. Together: deliberate skill-building — the unglamorous, focused practice that turns effort into competence.</p><small>That is stronger than memorizing “apprenticeship” because you can reconstruct the idea even if the keyword disappears from memory.</small></div>}</div></section>
 }
 
 export default function LearnCourse(){
-  return <div className="learn-course"><nav className="learn-course__rail" aria-label="Course sections"><a href="#learn-start">Start</a><a href="#learn-suits">Suits</a><a href="#learn-numbers">Numbers</a><a href="#learn-courts">Courts</a><a href="#learn-reversals">Reversals</a><a href="#learn-flow">Flow</a></nav><StartHere/><SuitsLesson/><NumbersLesson/><CourtsLesson/><ReversalsLesson/><FlowLesson/><Practice/></div>;
+  const [activeSection, setActiveSection] = useState('learn-start');
+
+  useEffect(() => {
+    const sections = COURSE_SECTIONS.map(([id]) => document.getElementById(id)).filter(Boolean);
+    if (!sections.length || !('IntersectionObserver' in window)) return undefined;
+
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible?.target?.id) setActiveSection(visible.target.id);
+    }, { rootMargin: '-22% 0px -58% 0px', threshold: [0, .08, .2, .4] });
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToSection = (id) => {
+    const target = document.getElementById(id);
+    if (!target) return;
+    setActiveSection(id);
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  };
+
+  return <div className="learn-course">
+    <nav className="learn-course__rail" aria-label="Course sections">
+      {COURSE_SECTIONS.map(([id,label]) => <button key={id} type="button" className={activeSection===id?'is-active':''} aria-current={activeSection===id?'true':undefined} onClick={()=>scrollToSection(id)}>{label}</button>)}
+    </nav>
+    <StartHere/>
+    <SuitsLesson/>
+    <NumbersLesson/>
+    <CourtsLesson/>
+    <ReversalsLesson/>
+    <FlowLesson/>
+    <Practice/>
+  </div>;
 }
