@@ -14,6 +14,7 @@ import './styles/learn.css';
 import './styles/learn-polish.css';
 import './styles/journey.css';
 import './styles/journey-launch.css';
+import './styles/journey-performance.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
