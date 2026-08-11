@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "audit:readings": "node scripts/audit_phase_6_2.mjs",
+    "build": "npm run audit:readings && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
