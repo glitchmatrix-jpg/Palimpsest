@@ -1,0 +1,40 @@
+/* Phase 4 finishing pass: functional in-page course rail + tighter rhythm. */
+.learn-course__rail button{
+  flex:0 0 auto;
+  appearance:none;
+  border:0;
+  padding:9px 14px;
+  border-radius:999px;
+  background:transparent;
+  color:#77697e;
+  font:inherit;
+  font-size:.68rem;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:background .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.learn-course__rail button:hover,.learn-course__rail button:focus-visible{
+  background:rgba(33,18,46,.1);
+  color:#21122e;
+  transform:translateY(-1px);
+}
+.learn-course__rail button.is-active{
+  background:#21122e;
+  color:#fff8ea;
+  box-shadow:0 7px 20px rgba(43,22,56,.13);
+}
+.learn-course__rail button:focus-visible{outline:2px solid rgba(109,62,161,.42);outline-offset:2px}
+.learn-section{margin-bottom:clamp(76px,9vw,118px);scroll-margin-top:154px}
+.learn-practice{margin-bottom:48px}
+@media(max-width:900px){
+  .learn-course__rail{scroll-padding-inline:8px}
+  .learn-course__rail button{flex:0 0 auto}
+  .learn-section{scroll-margin-top:126px}
+}
+@media(max-width:620px){
+  .learn-course__rail{gap:4px;padding:6px;margin-bottom:34px}
+  .learn-course__rail button{padding:8px 11px;font-size:.63rem}
+  .learn-section{margin-bottom:78px;scroll-margin-top:116px}
+}
+@media(prefers-reduced-motion:reduce){.learn-course__rail button{transition:none!important}}
