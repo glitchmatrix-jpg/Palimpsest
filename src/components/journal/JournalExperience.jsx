@@ -48,11 +48,15 @@ function ReadingDetail({reading,onDeleted,onUpdated}){
 
     <div className="journal-detail__cards">{(reading.cards||[]).map((card,index)=><div key={`${card.id}-${index}`}><div className={card.orientation==='reversed'?'is-reversed':''}><img src={asset(card.image)} alt={card.name}/></div><span>{reading.positions?.[index]} · {card.orientation}</span><strong>{card.name}</strong><small>{(card.keywords||[]).slice(0,3).join(' · ')}</small></div>)}</div>
 
-    <section className="journal-section"><span>THE READING</span><h3>{reading.summary}</h3>{(reading.synthesis||[]).map((paragraph,index)=><p key={index}>{paragraph}</p>)}</section>
+    <section className="journal-section"><span>THE CARDS</span>{(reading.cards||[]).map((card,index)=><div className="journal-card-reading" key={`${card.id}-reading`}><strong>{reading.positions?.[index]} — {card.name}{card.orientation==='reversed'?' reversed':''}</strong><p>{card.reading}</p></div>)}</section>
 
     {(reading.relations||[]).some((item)=>item.interesting)&&<section className="journal-section"><span>THE THREAD</span>{reading.relations.filter((item)=>item.interesting).map((item,index)=><div className="journal-thread" key={`${item.type}-${index}`}><strong>{item.axis}</strong><p>{item.text}</p></div>)}</section>}
 
     {reading.layers?.length>0&&<section className="journal-section"><span>THE LAYERS</span>{reading.layers.map((layer)=><div className="journal-layer" key={layer.id||layer.title}><strong>{layer.title}</strong><p>{layer.text}</p></div>)}</section>}
+
+    <section className="journal-section"><span>OVERALL READING</span><h3>{reading.summary}</h3>{(reading.synthesis||[]).map((paragraph,index)=><p key={index}>{paragraph}</p>)}</section>
+
+    {reading.reflection?.length>0&&<section className="journal-section"><span>REFLECTION</span><ol className="journal-reflection">{reading.reflection.map((item)=><li key={item}>{item}</li>)}</ol></section>}
 
     <section className="journal-note"><label><span>YOUR NOTE</span><textarea rows="7" value={note} onChange={(event)=>setNote(event.target.value)} placeholder="What actually resonated? What happened afterward? What do you want to remember?"/></label><div><small>{status}</small><button type="button" onClick={saveNote}>Save note</button></div></section>
   </article>;
@@ -74,7 +78,7 @@ export default function JournalExperience(){
   const visible=useMemo(()=>{
     const q=query.trim().toLowerCase();
     if(!q) return readings;
-    return readings.filter((reading)=>[reading.spreadName,reading.question,reading.note,cardLine(reading),...(reading.synthesis||[])].filter(Boolean).join(' ').toLowerCase().includes(q));
+    return readings.filter((reading)=>[reading.spreadName,reading.question,reading.note,cardLine(reading),...(reading.synthesis||[]),...(reading.cards||[]).map((card)=>card.reading)].filter(Boolean).join(' ').toLowerCase().includes(q));
   },[readings,query]);
   const selected=readings.find((item)=>item.id===selectedId)||null;
 
