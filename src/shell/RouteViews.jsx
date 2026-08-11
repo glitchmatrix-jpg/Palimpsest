@@ -1,4 +1,5 @@
 import { CardFrame, SectionEyebrow } from '../components/ui/Primitives';
+import CardLibrary from '../components/cards/CardLibrary';
 
 function PageIntro({ eyebrow, title, body, children }) {
   return (
@@ -27,14 +28,8 @@ export function LearnView() {
 export function CardsView() {
   return (
     <div className="shell-page shell-page--cards">
-      <PageIntro eyebrow="II · Cards" title="Seventy-eight symbols. One visual language." body="Browse the deck, inspect individual cards, and move between imagery, keywords and meaning." />
-      <div className="shell-card-preview" aria-label="Card library preview">
-        {['00_The_Fool.png','01_The_Magician.png','02_The_High_Priestess.png','03_The_Empress.png'].map((file) => (
-          <CardFrame className="shell-card-preview__item" key={file}>
-            <img src={`${import.meta.env.BASE_URL}cards/Major_Arcana/${file}`} alt="" />
-          </CardFrame>
-        ))}
-      </div>
+      <PageIntro eyebrow="II · Cards" title="Seventy-eight symbols. One visual language." body="Search the full deck, move between suits and archetypes, and open any card to read its layers." />
+      <CardLibrary />
     </div>
   );
 }
