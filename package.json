@@ -8,7 +8,8 @@
     "audit:readings": "node scripts/audit_phase_6_2.mjs",
     "audit:combinations": "node scripts/audit_phase_6_3.mjs",
     "audit:spreads": "node scripts/audit_phase_6_3_triples.mjs",
-    "build": "npm run audit:readings && npm run audit:combinations && npm run audit:spreads && vite build",
+    "audit:spread-systems": "node scripts/audit_phase_6_4.mjs",
+    "build": "npm run audit:readings && npm run audit:combinations && npm run audit:spreads && npm run audit:spread-systems && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
