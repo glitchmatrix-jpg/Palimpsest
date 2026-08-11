@@ -7,7 +7,8 @@
     "dev": "vite",
     "audit:readings": "node scripts/audit_phase_6_2.mjs",
     "audit:combinations": "node scripts/audit_phase_6_3.mjs",
-    "build": "npm run audit:readings && npm run audit:combinations && vite build",
+    "audit:spreads": "node scripts/audit_phase_6_3_triples.mjs",
+    "build": "npm run audit:readings && npm run audit:combinations && npm run audit:spreads && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
