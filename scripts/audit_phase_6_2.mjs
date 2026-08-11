@@ -9,9 +9,6 @@ const corpus = [];
 const FORBIDDEN = [
   'keeps this grounded in',
   'Because it is reversed, the theme is less straightforward',
-  'In the Mind position',
-  'In the Body position',
-  'In the Spirit position',
   "does not prove that",
   'hypothesis to compare',
   'fit it to your question',
@@ -126,6 +123,7 @@ for (const card of TAROT_CARDS) {
       assert(reading.includes(card.name), `${label}: card name missing`);
       assert(hasTheme(reading, entry), `${label}: does not clearly carry an orientation-specific card theme`);
       assert(!FORBIDDEN.some((phrase) => reading.toLowerCase().includes(phrase.toLowerCase())), `${label}: contains deprecated template/disclaimer language`);
+      assert(!/^In the (?:Mind|Body|Spirit) position\b/i.test(reading), `${label}: starts with deprecated textbook position language`);
       assert(!OVERCLAIMS.some((pattern) => pattern.test(reading)), `${label}: contains deterministic or mind-reading language`);
       assert(POSITION_SIGNALS[position].some((pattern) => pattern.test(reading)), `${label}: position does not read distinctly enough as ${position}`);
       assert(!/\b(\w+)\s+\1\b/i.test(reading), `${label}: contains a doubled word`);
