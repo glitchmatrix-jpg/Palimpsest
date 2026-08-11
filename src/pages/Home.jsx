@@ -94,6 +94,16 @@ export default function Home() {
     }, duration);
   };
 
+  const beginPreparedDive = (duration) => {
+    setTransitionPrep(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setEntering(true);
+        finishEntry(duration);
+      });
+    });
+  };
+
   const enterPalimpsest = () => {
     if (entering || transitionPrep) return;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -104,21 +114,9 @@ export default function Home() {
       return;
     }
 
-    if (coarseMotion) {
-      // Give mobile browsers two clean frames to drop the WebGL canvases before
-      // beginning the compositor-only card transform.
-      setTransitionPrep(true);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setEntering(true);
-          finishEntry(1320);
-        });
-      });
-      return;
-    }
-
-    setEntering(true);
-    finishEntry(1450);
+    // Both desktop and mobile receive a painted scale(1) preparation frame before
+    // the dive begins. Mobile additionally drops WebGL while transitionPrep is true.
+    beginPreparedDive(coarseMotion ? 1320 : 1450);
   };
 
   const returnToPortal = () => {
@@ -182,15 +180,15 @@ export default function Home() {
         <div className="hero__field" aria-hidden="true">
           {!suspendWebGL && (
             <Dither
-              waveColor={[0.43, 0.19, 0.68]}
+              waveColor={[0.50, 0.21, 0.78]}
               disableAnimation={entering}
               enableMouseInteraction={!entering}
               mouseRadius={0.3}
-              colorNum={5}
+              colorNum={4}
               pixelSize={2}
-              waveAmplitude={0.32}
-              waveFrequency={2.7}
-              waveSpeed={0.04}
+              waveAmplitude={0.35}
+              waveFrequency={2.55}
+              waveSpeed={0.026}
             />
           )}
         </div>
@@ -198,23 +196,23 @@ export default function Home() {
         <div className="hero__metal" aria-hidden="true">
           {!suspendWebGL && (
             <MoltenMetal
-              color1="#1B0C2E"
-              color2="#6F3FA8"
-              color3="#D6B45C"
-              speed={0.2}
-              scale={4.6}
+              color1="#1A092C"
+              color2="#7541AF"
+              color3="#E0BD61"
+              speed={0.14}
+              scale={5.15}
               detail={3}
-              glow={1.45}
-              coreSize={0.08}
-              swirl={0.9}
-              fold={-0.18}
-              blackPoint={0.07}
-              brightness={1.15}
+              glow={1.55}
+              coreSize={0.075}
+              swirl={0.72}
+              fold={-0.16}
+              blackPoint={0.075}
+              brightness={1.18}
               grain
-              grainIntensity={0.03}
+              grainIntensity={0.024}
               mouseInteraction={!entering}
-              mouseStrength={0.18}
-              opacity={0.88}
+              mouseStrength={0.14}
+              opacity={0.9}
             />
           )}
         </div>
