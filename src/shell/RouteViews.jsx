@@ -2,7 +2,7 @@ import { CardFrame, SectionEyebrow } from '../components/ui/Primitives';
 import CardLibrary from '../components/cards/CardLibrary';
 import LearnCourse from '../components/learn/LearnCourse';
 import FoolsJourney from '../components/journey/FoolsJourney';
-import ReadExperience from '../components/read/ReadExperience';
+import ReadExperience from '../components/read/ReadExperience61';
 import { usePalimpsestRouter } from './router';
 
 function PageIntro({ eyebrow, title, body, children }) {
