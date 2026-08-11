@@ -8,6 +8,7 @@ import './styles/portal-visuals.css';
 import './styles/motion.css';
 import './styles/portal-transition.css';
 import './styles/shell.css';
+import './styles/cards.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
