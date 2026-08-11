@@ -24,8 +24,24 @@
   to { transform: translate(-50%, -50%) rotate(-383deg); }
 }
 
-/* Locked portal dive: the card stays above the bloom and performs one uninterrupted
-   compositor transform. The light only takes over during the final fraction. */
+/* Phase 1 locked portal dive. transitionPrep forces a real painted scale(1)
+   frame before is-entering is applied, so desktop and mobile both interpolate
+   from the card's actual starting position rather than snapping to a promoted layer. */
+.is-transition-prep .portal-core {
+  z-index: 60;
+}
+
+.is-transition-prep .portal-card-wrap {
+  animation: none !important;
+  transition: none !important;
+  transform: translate3d(0,0,0) scale(1) !important;
+  transform-origin: 50% 50%;
+  opacity: 1 !important;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 .is-entering .portal-core {
   animation: none !important;
   transform: none !important;
@@ -36,7 +52,7 @@
 .is-entering .portal-card-wrap {
   animation: none !important;
   transition:
-    transform 1.34s cubic-bezier(.17,.70,.10,1),
+    transform 1.34s cubic-bezier(.16,.68,.10,1),
     opacity .14s linear 1.20s !important;
   transform: translate3d(0,0,0) scale(8.4) !important;
   transform-origin: 50% 50%;
@@ -72,7 +88,6 @@
 .is-entering .hero__rings,
 .is-entering .hero__particles {
   animation: none !important;
-  transform: none !important;
   filter: none !important;
   transition: opacity .46s ease-out !important;
   opacity: .06 !important;
@@ -120,20 +135,6 @@
   .is-transition-prep .portal-card-sheen,
   .is-transition-prep .portal-card-edge {
     display: none !important;
-  }
-
-  .is-transition-prep .portal-card-wrap {
-    animation: none !important;
-    transform: translate3d(0,0,0) !important;
-    transition: none !important;
-    opacity: 1 !important;
-    will-change: transform, opacity;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-
-  .is-entering .portal-core {
-    z-index: 60;
   }
 
   .is-entering .portal-card-wrap {
