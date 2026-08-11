@@ -5,6 +5,7 @@
 
 import { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
+import { detectGraphicsMode } from '../../../utils/graphics';
 import './MoltenMetal.css';
 
 const hexToRgb = hex => {
@@ -38,10 +39,12 @@ export default function MoltenMetal({
  color1='#24133F',color2='#7952B3',color3='#D6B45C',speed=.18,scale=4.5,detail=3,glow=1.25,coreSize=.08,swirl=.8,fold=-.18,
  blackPoint=.08,brightness=1.1,grain=true,grainIntensity=.035,mouseInteraction=true,mouseStrength=.18,opacity=.75,className=''
 }){
+ const mode=detectGraphicsMode();
  const ref=useRef(null);
  useEffect(()=>{
-  const container=ref.current;if(!container)return;
-  const renderer=new Renderer({webgl:2,alpha:true,premultipliedAlpha:true,antialias:false,dpr:Math.min(window.devicePixelRatio||1,1.5)});
+  const container=ref.current;if(!container||mode!=='full'||!container.getClientRects().length)return;
+  let renderer;
+  try{renderer=new Renderer({webgl:2,alpha:true,premultipliedAlpha:true,antialias:false,dpr:Math.min(window.devicePixelRatio||1,1.5)});}catch{return;}
   const gl=renderer.gl;gl.clearColor(0,0,0,0);const canvas=gl.canvas;Object.assign(canvas.style,{width:'100%',height:'100%',display:'block'});container.appendChild(canvas);
   const geometry=new Triangle(gl);
   const program=new Program(gl,{vertex,fragment,uniforms:{
@@ -61,6 +64,7 @@ export default function MoltenMetal({
   const io=new IntersectionObserver(([e])=>{visible=e.isIntersecting;visible?start():stop()});io.observe(container);
   const vis=()=>{pageVisible=!document.hidden;pageVisible?start():stop()};document.addEventListener('visibilitychange',vis);start();
   return()=>{stop();ro.disconnect();io.disconnect();document.removeEventListener('visibilitychange',vis);canvas.removeEventListener('mousemove',mm);canvas.removeEventListener('mouseleave',ml);if(container.contains(canvas))container.removeChild(canvas);gl.getExtension('WEBGL_lose_context')?.loseContext();};
- },[]);
+ },[mode]);
+ if(mode!=='full')return null;
  return <div ref={ref} className={`molten-metal-container ${className}`.trim()}/>;
 }
