@@ -123,7 +123,7 @@ function positionReading(entry, position) {
 
     Situation: `${display} says the situation itself is organized around ${theme}. ${meaning} Before trying to solve it, get clear on how ${theme} is actually operating; that is the condition the other cards are responding to and the part you would have to understand correctly for any response to work.` ,
 
-    Challenge: `${display} makes ${theme} the point of friction. ${meaning} In this position, ask where ${theme} is costing energy, narrowing your options, distorting judgment or making a necessary response harder to carry out. The challenge is to deal with that specific pressure directly rather than fighting the label.` ,
+    Challenge: `${display} makes ${theme} the point of friction. ${meaning} In this position, ask where ${theme} is costing energy, narrowing your options, distorting judgment or making a necessary response harder to carry out. The challenge is to deal with the pressure created by ${theme} directly rather than fighting the card’s label.` ,
 
     Advice: `As advice, ${display} points you toward ${theme}. ${meaning} ${suit || `Turn ${theme} into one concrete response: a decision, boundary, conversation, pause or next step you can actually carry out.`} ${court}`,
 
@@ -133,11 +133,11 @@ function positionReading(entry, position) {
 
     Spirit: `Underneath the practical details, ${display} raises a deeper question about ${theme}. ${meaning} ${suit || `At this level, the card is less about one event and more about the value, identity or definition of a meaningful life that the situation is forcing you to examine.`} Ask what living with ${theme} would require from your values when nobody else is choosing for you. ${court} ${major}`,
 
-    You: `On your side of the dynamic, ${display} shows ${theme} in the stance you are bringing. ${meaning} You may be trying to create, protect, avoid or control something through ${theme}. Pay attention to how that stance shapes the exchange, especially where it feels so familiar that you barely notice you are doing it.` ,
+    You: `On your side of the dynamic, ${display} shows ${theme} in the stance you are bringing. ${meaning} You may be trying to create, protect, avoid or control something through ${theme}. Pay attention to how a stance built around ${theme} changes the exchange, especially where it feels so familiar that you barely notice you are doing it.` ,
 
-    Them: `From the outside, ${display} suggests the other person is showing ${theme}. ${meaning} Keep the ${theme} interpretation tied to what they actually do, say, avoid or repeatedly choose. Their observable behaviour is enough to read the role they appear to be taking here; there is no need to invent private motives.` ,
+    Them: `From the outside, ${display} suggests the other person is showing ${theme}. ${meaning} Keep the ${theme} interpretation tied to what they actually do, say, avoid or repeatedly choose. What matters is whether their observable behaviour consistently supports ${theme}; there is no need to invent private motives.` ,
 
-    Relationship: `Between you, ${display} suggests the relationship itself is operating through ${theme}. ${meaning} When ${theme} becomes the climate of the connection, look at what the interaction repeatedly produces when both sides meet. That recurring pattern matters more here than deciding which person deserves the label.` ,
+    Relationship: `Between you, ${display} suggests the relationship itself is operating through ${theme}. ${meaning} When ${theme} becomes the climate of the connection, look at what the interaction repeatedly produces when both sides meet. A recurring pattern of ${theme} matters more here than deciding which person deserves the label.` ,
   };
 
   return clean((readings[position] || `${display} emphasizes ${theme}. ${meaning}`).replace(/\s+/g, ' '));
