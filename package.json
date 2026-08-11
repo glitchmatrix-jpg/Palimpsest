@@ -13,9 +13,10 @@
     "audit:spread-systems": "node scripts/audit_phase_6_4.mjs",
     "audit:read-qa": "node scripts/audit_phase_6_5_v2.mjs",
     "audit:phase7": "node scripts/audit_phase_7.mjs",
-    "audit:ci": "npm run audit:readings && npm run audit:combinations && npm run audit:spreads && npm run audit:spread-systems && npm run audit:read-qa && npm run audit:phase7",
-    "audit:certify": "npm run audit:readings && npm run audit:combinations:exhaustive && npm run audit:spreads:exhaustive && npm run audit:spread-systems && npm run audit:read-qa && npm run audit:phase7",
-    "build": "npm run audit:phase7 && vite build",
+    "audit:phase8": "node scripts/audit_phase_8.mjs",
+    "audit:ci": "npm run audit:readings && npm run audit:combinations && npm run audit:spreads && npm run audit:spread-systems && npm run audit:read-qa && npm run audit:phase7 && npm run audit:phase8",
+    "audit:certify": "npm run audit:readings && npm run audit:combinations:exhaustive && npm run audit:spreads:exhaustive && npm run audit:spread-systems && npm run audit:read-qa && npm run audit:phase7 && npm run audit:phase8",
+    "build": "npm run audit:phase7 && npm run audit:phase8 && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
