@@ -1,129 +1,162 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Threads from '../../vendor/react-bits/Threads/Threads';
-import ScrollReveal from '../../vendor/react-bits/ScrollReveal/ScrollReveal';
 
 const asset = (path) => `${import.meta.env.BASE_URL}${path}`;
 
 const MAJORS = [
-  ['00','The Fool','00_The_Fool.png','Begin','Openness before certainty. The Fool matters because development has to start before you can know exactly who you will become.','The journey begins with capacity rather than mastery: enough trust to enter experience without pretending to control it.'],
-  ['01','The Magician','01_The_Magician.png','Act','Potential becomes agency. Attention, tools and intention are gathered into a deliberate first move.','The Fool stops being merely available to experience and discovers: I can affect what happens next.'],
-  ['02','The High Priestess','02_The_High_Priestess.png','Listen','Action is not enough. Some information arrives through observation, pattern recognition, restraint and what has not yet been said.','After proving agency, the next lesson is limits: not everything useful can be forced into immediate action.'],
-  ['03','The Empress','03_The_Empress.png','Nourish','Growth needs conditions. The Empress asks what must be fed, protected and given time if it is going to become more than an idea.','Inner awareness becomes something embodied: care turns possibility into living form.'],
-  ['04','The Emperor','04_The_Emperor.png','Structure','What grows also needs boundaries, responsibility and a framework strong enough to hold it.','Nurture without structure can sprawl. The Emperor adds shape, limits and accountability to what the Empress helped grow.'],
-  ['05','The Hierophant','05_The_Hierophant.png','Learn the system','No one develops alone. Traditions, teachers and institutions transmit knowledge — and also rules that eventually need examination.','Private structure becomes social structure: the Fool encounters systems that existed long before them.'],
-  ['06','The Lovers','06_The_Lovers.png','Choose','Values become real when they cost something. The Lovers is not only connection; it is the pressure to choose in alignment with what matters.','After inheriting rules, the Fool has to decide which values are genuinely theirs.'],
-  ['07','The Chariot','07_The_Chariot.png','Direct','Conflicting motives do not disappear; they must be coordinated. Direction is the ability to move while holding tension.','Choice becomes commitment. The Chariot tests whether values can survive contact with momentum and opposition.'],
-  ['08','Strength','08_Strength.png','Regulate','Force is easy to recognize. Regulation is harder: staying capable without becoming ruled by fear, anger or urgency.','The Chariot controls direction externally; Strength develops control internally.'],
-  ['09','The Hermit','09_The_Hermit.png','Examine','Solitude creates distance from noise. The point is not withdrawal for its own sake, but enough quiet to inspect what experience has actually taught you.','After learning self-command, the Fool turns inward to ask whether the direction itself is worth continuing.'],
-  ['10','Wheel of Fortune','10_Wheel_of_Fortune.png','Adapt','Reflection cannot stop change. Conditions shift, timing changes, and some forces remain outside personal control.','The Hermit finds an inner compass; the Wheel tests whether that compass can survive an unstable world.'],
-  ['11','Justice','11_Justice.png','Account','Change does not erase consequence. Justice asks what is true, what followed from your choices, and what responsibility now belongs to you.','After confronting uncertainty outside the self, the Fool confronts causality: actions leave a record.'],
-  ['12','The Hanged Man','12_The_Hanged_Man.png','Reframe','Some problems cannot be solved from the position that created them. Suspension interrupts reflex and makes another angle possible.','Justice clarifies what is. The Hanged Man asks whether seeing clearly is enough — or whether the frame itself must change.'],
-  ['13','Death','13_Death.png','End','A real ending removes options. Transformation begins when an exhausted form is allowed to close instead of being endlessly repaired.','Perspective changes what you can see; Death changes what can continue.'],
-  ['14','Temperance','14_Temperance.png','Integrate','After disruption, the task is not to return unchanged. Temperance combines what remains into a more workable proportion.','Death clears the old arrangement. Temperance asks what a better arrangement actually looks like in practice.'],
-  ['15','The Devil','15_The_Devil.png','Name the attachment','Integration exposes what still has leverage over you: appetite, fear, shame, status, avoidance, dependency. Naming the bond restores choice.','Balance is tested by the parts of us that do not want balance.'],
-  ['16','The Tower','16_The_Tower.png','Let false structure fail','Some structures cannot be moderated because their premise is broken. The Tower is the moment reality becomes stronger than maintenance.','The Devil reveals the bond; the Tower shows what happens when the system built around that bond can no longer hold.'],
-  ['17','The Star','17_The_Star.png','Reorient','After collapse, hope is useful only if it gives direction. The Star is the first credible picture of a future worth rebuilding toward.','The Tower removes false certainty. The Star replaces certainty with orientation.'],
-  ['18','The Moon','18_The_Moon.png','Move through ambiguity','Recovery does not eliminate projection, fear or incomplete information. The Moon teaches careful movement when certainty is unavailable.','Hope creates direction, but direction still has to pass through uncertainty.'],
-  ['19','The Sun','19_The_Sun.png','See clearly','What was ambiguous becomes visible enough to participate in directly. Clarity restores energy because less effort is spent guessing.','The Moon teaches you not to fake certainty. The Sun arrives when enough has become visible to act without pretending.'],
-  ['20','Judgement','20_Judgement.png','Reckon','Insight becomes consequential when you answer it. Judgement is an honest review of the past followed by a different response in the present.','Clarity creates responsibility: once you can see the pattern, continuing it becomes a choice.'],
-  ['21','The World','21_The_World.png','Integrate and complete','Completion is not perfection. It is the point where enough has been learned, embodied and connected that the cycle can genuinely close.','Judgement changes the response; the World integrates the change into a whole. Completion then makes another beginning possible.']
-].map(([number,name,file,verb,insight,bridge],index)=>({number,name,file,verb,insight,bridge,index}));
+  ['00','The Fool','00_The_Fool.png','BEGIN','Start before certainty','Development starts with participation. The Fool is not ignorance; it is willingness to enter experience before you can guarantee the outcome.','Potential has to move before it can become agency.'],
+  ['01','The Magician','01_The_Magician.png','ACT','Turn possibility into agency','The Magician gathers attention, tools and intention into a deliberate move. The lesson is simple: capacity matters only when it is directed.','The Fool enters. The Magician discovers that entry can become influence.'],
+  ['02','The High Priestess','02_The_High_Priestess.png','LISTEN','Know when not to force','Action is not the only way to learn. Observation, restraint and pattern recognition reveal information that speed can hide.','After proving agency, the next lesson is its limit: not everything useful responds to force.'],
+  ['03','The Empress','03_The_Empress.png','NOURISH','Give growth conditions','Possibility becomes real only when it is fed, protected and given time. The Empress asks what deserves sustained care rather than another burst of enthusiasm.','Inner awareness becomes embodied: care turns possibility into living form.'],
+  ['04','The Emperor','04_The_Emperor.png','STRUCTURE','Build what can hold','Growth without boundaries can sprawl. The Emperor adds structure, responsibility and limits strong enough to support what matters.','Nurture creates life; structure makes it sustainable.'],
+  ['05','The Hierophant','05_The_Hierophant.png','LEARN THE SYSTEM','Understand inherited rules','No one develops alone. Teachers, traditions and institutions transmit useful knowledge — and assumptions that eventually need examination.','Private structure becomes social structure: now the Fool meets systems that existed first.'],
+  ['06','The Lovers','06_The_Lovers.png','CHOOSE','Make values costly enough to matter','Values become meaningful when a choice excludes another possibility. The Lovers asks what you will actually organize your life around.','After inheriting rules, the Fool has to decide which values are genuinely theirs.'],
+  ['07','The Chariot','07_The_Chariot.png','DIRECT','Coordinate competing drives','Conflicting motives do not vanish when you choose. Progress requires holding tension without letting every impulse steer.','Choice becomes commitment; commitment now has to survive momentum and opposition.'],
+  ['08','Strength','08_Strength.png','REGULATE','Control yourself before the situation','Force is easy to recognize. Strength is quieter: staying capable without becoming ruled by fear, anger or urgency.','The Chariot directs movement outside. Strength develops control inside.'],
+  ['09','The Hermit','09_The_Hermit.png','EXAMINE','Create enough distance to think','Solitude is useful when it separates signal from noise. The Hermit asks what experience has actually taught you once performance and reaction fall away.','After self-command comes a harder question: is the direction itself worth continuing?'],
+  ['10','Wheel of Fortune','10_Wheel_of_Fortune.png','ADAPT','Keep an inner compass in a changing system','Reflection cannot freeze conditions. Timing shifts, luck changes and some forces stay outside personal control.','The Hermit finds an inner compass; the Wheel tests whether it survives an unstable world.'],
+  ['11','Justice','11_Justice.png','ACCOUNT','Trace choices to consequences','Change does not erase causality. Justice asks what is true, what followed from your decisions and what responsibility now belongs to you.','After uncertainty outside the self comes consequence inside the record of what you did.'],
+  ['12','The Hanged Man','12_The_Hanged_Man.png','REFRAME','Change the position, not just the answer','Some problems resist effort because the frame itself is wrong. Suspension interrupts reflex long enough for another angle to become possible.','Justice clarifies what is. The Hanged Man asks whether seeing clearly is enough.'],
+  ['13','Death','13_Death.png','END','Let exhausted forms stop','A real ending removes options. Transformation begins when something finished is allowed to close instead of being endlessly repaired.','Perspective changes what you can see; Death changes what can continue.'],
+  ['14','Temperance','14_Temperance.png','INTEGRATE','Build a better proportion','After disruption, the task is not restoration. Temperance combines what remains into a more workable arrangement.','Death clears the old arrangement. Temperance asks what deserves to replace it.'],
+  ['15','The Devil','15_The_Devil.png','NAME THE ATTACHMENT','Identify what still has leverage','Appetite, fear, shame, status, avoidance and dependency gain power when they stay unnamed. Seeing the bond restores the possibility of choice.','Balance gets tested by the parts of us that benefit from imbalance.'],
+  ['16','The Tower','16_The_Tower.png','LET FALSE STRUCTURE FAIL','Stop maintaining what reality has disproved','Some structures cannot be improved because their premise is broken. The Tower is the point where reality becomes stronger than maintenance.','The Devil names the bond; the Tower removes the system built around it.'],
+  ['17','The Star','17_The_Star.png','REORIENT','Choose a future worth rebuilding toward','Hope is useful when it gives direction. The Star is not optimism for its own sake; it is the first credible orientation after collapse.','The Tower removes false certainty. The Star replaces certainty with direction.'],
+  ['18','The Moon','18_The_Moon.png','MOVE THROUGH AMBIGUITY','Do not manufacture certainty','Recovery does not eliminate projection, fear or incomplete information. The Moon teaches careful movement when the map is still partial.','Direction is not certainty. The Star points; the Moon tests whether you can proceed without pretending to know.'],
+  ['19','The Sun','19_The_Sun.png','SEE CLEARLY','Use visibility to participate','What was ambiguous becomes visible enough to engage directly. Clarity restores energy because less effort is spent guessing.','The Moon teaches you not to fake certainty. The Sun arrives when enough is actually visible.'],
+  ['20','Judgement','20_Judgement.png','RECKON','Answer what you now understand','Insight becomes consequential when it changes the response. Judgement is an honest review of the past followed by different action in the present.','Once the pattern is visible, repeating it becomes a choice.'],
+  ['21','The World','21_The_World.png','COMPLETE','Let a finished cycle become context','Completion is not perfection. It is enough learning, embodiment and connection for a cycle to genuinely close.','Judgement changes the response; the World integrates that change into a whole.']
+].map(([number,name,file,verb,task,insight,bridge],index)=>({number,name,file,verb,task,insight,bridge,index}));
 
 const ACTS = [
-  {id:'act-1', label:'ACT I', range:'0–VII', title:'Identity and participation', text:'The Fool enters the world, develops agency, meets structure and inherited systems, then learns to choose and move with intention.', from:0, to:7},
-  {id:'act-2', label:'ACT II', range:'VIII–XIV', title:'Self-mastery and transformation', text:'External momentum gives way to regulation, reflection, consequence, reframing, endings and the difficult work of integration.', from:8, to:14},
-  {id:'act-3', label:'ACT III', range:'XV–XXI', title:'Disruption and integration', text:'The remaining attachments are exposed, weak structures fail, orientation returns, uncertainty clears and the cycle is consciously completed.', from:15, to:21}
+  {from:0,to:7,label:'ACT I',range:'0–VII',title:'Identity and participation',short:'Enter, act, learn, choose, commit.',tone:'violet'},
+  {from:8,to:14,label:'ACT II',range:'VIII–XIV',title:'Self-mastery and transformation',short:'Regulate, examine, adapt, end, integrate.',tone:'indigo'},
+  {from:15,to:21,label:'ACT III',range:'XV–XXI',title:'Disruption and integration',short:'Expose, collapse, reorient, clarify, complete.',tone:'gold'}
 ];
 
-function CardThumb({card,onOpen}) {
-  return <button className="journey-node__card" type="button" onClick={()=>onOpen(card)} aria-label={`Open ${card.name}`}>
-    <img src={asset(`cards/Major_Arcana/${card.file}`)} alt={card.name}/>
-    <span className="journey-node__glint" aria-hidden="true"/>
-  </button>;
+function actFor(index){return ACTS.find(a=>index>=a.from&&index<=a.to) || ACTS[0];}
+
+function FocusPanel({card,onClose,onSelect}){
+  if(!card)return null;
+  const prev=MAJORS[card.index-1],next=MAJORS[card.index+1];
+  return createPortal(
+    <div className="journey-focus" role="dialog" aria-modal="true" aria-label={`${card.name} in the Fool's Journey`} onMouseDown={e=>{if(e.target===e.currentTarget)onClose();}}>
+      <article className="journey-focus__panel">
+        <button className="journey-focus__close" type="button" onClick={onClose} aria-label="Close">×</button>
+        <div className="journey-focus__neighbors">
+          <button disabled={!prev} onClick={()=>prev&&onSelect(prev)}>{prev&&<><small>{prev.number}</small><span>{prev.name}</span></>}</button>
+          <div><small>{card.number}</small><span>{card.name}</span></div>
+          <button disabled={!next} onClick={()=>next&&onSelect(next)}>{next&&<><small>{next.number}</small><span>{next.name}</span></>}</button>
+        </div>
+        <div className="journey-focus__body">
+          <figure><img src={asset(`cards/Major_Arcana/${card.file}`)} alt={card.name}/></figure>
+          <div className="journey-focus__copy">
+            <span>{card.number} · {card.verb}</span>
+            <h2>{card.name}</h2>
+            <h3>{card.task}</h3>
+            <p>{card.insight}</p>
+            <div className="journey-focus__bridge"><small>WHY IT FOLLOWS</small><p>{card.bridge}</p></div>
+            <div className="journey-focus__use"><small>USE IT IN A READING</small><p>Ask what task this card introduces here. What has to be learned, changed, accepted or completed before the situation can move?</p></div>
+          </div>
+        </div>
+      </article>
+    </div>,document.body
+  );
 }
 
-function FocusPanel({card,onClose,onSelect}) {
-  if(!card) return null;
-  const prev=MAJORS[card.index-1];
-  const next=MAJORS[card.index+1];
-  return createPortal(<div className="journey-focus" role="dialog" aria-modal="true" aria-label={`${card.name} in the Fool's Journey`} onMouseDown={e=>{if(e.target===e.currentTarget)onClose();}}>
-    <article className="journey-focus__panel">
-      <button className="journey-focus__close" type="button" onClick={onClose} aria-label="Close">×</button>
-      <div className="journey-focus__sequence">
-        <button disabled={!prev} onClick={()=>prev&&onSelect(prev)}><span>{prev?.number||'—'}</span><strong>{prev?.name||'Beginning'}</strong></button>
-        <i>→</i>
-        <div className="is-current"><span>{card.number}</span><strong>{card.name}</strong></div>
-        <i>→</i>
-        <button disabled={!next} onClick={()=>next&&onSelect(next)}><span>{next?.number||'—'}</span><strong>{next?.name||'Completion'}</strong></button>
-      </div>
-      <div className="journey-focus__body">
-        <figure><img src={asset(`cards/Major_Arcana/${card.file}`)} alt={card.name}/></figure>
-        <div className="journey-focus__copy">
-          <span>{card.number} · {card.verb}</span>
-          <h2>{card.name}</h2>
-          <p className="journey-focus__insight">{card.insight}</p>
-          <div className="journey-focus__bridge"><small>WHY IT FOLLOWS</small><p>{card.bridge}</p></div>
-          <p className="journey-focus__question"><b>Use it:</b> What changes in a reading if you treat this card as a developmental task rather than a personality label?</p>
-        </div>
-      </div>
-    </article>
-  </div>,document.body);
+function JourneyScene({card,isActive,onOpen}){
+  const prev=MAJORS[card.index-1],next=MAJORS[card.index+1],act=actFor(card.index);
+  return <section className={`journey-scene journey-scene--${act.tone} ${isActive?'is-active':''}`} data-index={card.index}>
+    <div className="journey-scene__halo" aria-hidden="true"/>
+    <div className="journey-scene__ghost journey-scene__ghost--prev" aria-hidden="true">{prev&&<img src={asset(`cards/Major_Arcana/${prev.file}`)} alt=""/>}</div>
+    <div className="journey-scene__ghost journey-scene__ghost--next" aria-hidden="true">{next&&<img src={asset(`cards/Major_Arcana/${next.file}`)} alt=""/>}</div>
+    <div className="journey-scene__act"><span>{act.label}</span><b>{act.range}</b></div>
+    <div className="journey-scene__card-wrap">
+      <button className="journey-scene__card" type="button" onClick={()=>onOpen(card)} aria-label={`Open ${card.name}`}>
+        <img src={asset(`cards/Major_Arcana/${card.file}`)} alt={card.name}/>
+        <i className="journey-scene__sheen" aria-hidden="true"/>
+      </button>
+      <div className="journey-scene__number" aria-hidden="true">{card.number}</div>
+    </div>
+    <div className="journey-scene__copy">
+      <span>{card.number} · {card.verb}</span>
+      <h2>{card.name}</h2>
+      <h3>{card.task}</h3>
+      <p>{card.insight}</p>
+      <div className="journey-scene__handoff"><small>WHY THIS COMES NEXT</small><p>{card.bridge}</p></div>
+      <button type="button" onClick={()=>onOpen(card)}>Open this transition <i>↗</i></button>
+    </div>
+    <div className="journey-scene__pulse" aria-hidden="true"><i/><i/><i/></div>
+  </section>;
 }
 
 export default function FoolsJourney(){
   const root=useRef(null);
-  const [selected,setSelected]=useState(null);
   const [active,setActive]=useState(0);
+  const [selected,setSelected]=useState(null);
+  const activeAct=actFor(active);
+
+  useEffect(()=>{
+    const el=root.current;if(!el)return;
+    const scenes=[...el.querySelectorAll('.journey-scene')];
+    const io=new IntersectionObserver(entries=>{
+      let best=null;
+      for(const entry of entries){if(entry.isIntersecting&&(!best||entry.intersectionRatio>best.intersectionRatio))best=entry;}
+      if(best)setActive(Number(best.target.dataset.index));
+    },{threshold:[.35,.55,.72]});
+    scenes.forEach(s=>io.observe(s));
+    return()=>io.disconnect();
+  },[]);
 
   useEffect(()=>{
     const el=root.current;if(!el)return;
     let raf=0;
-    const update=()=>{raf=0;const rect=el.getBoundingClientRect();const total=Math.max(1,rect.height-window.innerHeight);const progress=Math.min(1,Math.max(0,-rect.top/total));el.style.setProperty('--journey-progress',progress);setActive(Math.min(21,Math.max(0,Math.round(progress*21))));};
+    const update=()=>{raf=0;const r=el.getBoundingClientRect();const total=Math.max(1,r.height-window.innerHeight);const p=Math.max(0,Math.min(1,-r.top/total));el.style.setProperty('--journey-progress',p.toFixed(4));};
     const onScroll=()=>{if(!raf)raf=requestAnimationFrame(update)};
     update();window.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',onScroll);
     return()=>{window.removeEventListener('scroll',onScroll);window.removeEventListener('resize',onScroll);if(raf)cancelAnimationFrame(raf)};
   },[]);
 
-  useEffect(()=>{if(!selected)return;const close=e=>{if(e.key==='Escape')setSelected(null)};document.addEventListener('keydown',close);return()=>document.removeEventListener('keydown',close)},[selected]);
+  useEffect(()=>{if(!selected)return;const key=e=>{if(e.key==='Escape')setSelected(null)};document.addEventListener('keydown',key);document.body.classList.add('journey-modal-open');return()=>{document.removeEventListener('keydown',key);document.body.classList.remove('journey-modal-open');}},[selected]);
 
-  const actFor=useMemo(()=>MAJORS.map(c=>ACTS.find(a=>c.index>=a.from&&c.index<=a.to)),[]);
+  return <div className={`fools-journey fools-journey--${activeAct.tone}`} ref={root}>
+    <div className="journey-fixed" aria-hidden="true">
+      <div className="journey-fixed__threads"><Threads color={[0.62,0.42,0.78]} amplitude={0.72} distance={0.19} enableMouseInteraction={false}/></div>
+      <div className="journey-fixed__vignette"/>
+      <div className="journey-fixed__stars"/>
+      <div className="journey-fixed__orb journey-fixed__orb--a"/>
+      <div className="journey-fixed__orb journey-fixed__orb--b"/>
+    </div>
 
-  return <div className="fools-journey" ref={root}>
-    <div className="journey-atmosphere" aria-hidden="true"><Threads color={[0.55,0.36,0.76]} amplitude={0.5} distance={0.16} enableMouseInteraction={false}/></div>
     <header className="journey-hero">
+      <div className="journey-hero__sigil" aria-hidden="true"><i/><i/><i/></div>
       <span>PALIMPSEST · THE MAJOR ARCANA</span>
-      <h1>The Fool’s Journey</h1>
-      <ScrollReveal className="journey-hero__reveal" baseOpacity={0.18} baseRotation={0.6} blurStrength={1.5}>Twenty-two cards become easier to remember when they stop being twenty-two definitions and become one sequence of problems a person has to learn how to solve.</ScrollReveal>
-      <p className="journey-hero__note">This is a teaching model, not a claim that every life follows one fixed path. Use the sequence to understand how each Major changes the problem introduced by the one before it.</p>
-      <div className="journey-hero__cue"><i/><span>scroll to unfold</span></div>
+      <h1>The Fool’s<br/>Journey</h1>
+      <p className="journey-hero__thesis">Twenty-two cards become memorable when you stop treating them as definitions and start seeing a sequence of problems a person learns to solve.</p>
+      <p className="journey-hero__note">A teaching model, not a prediction. The value is in the transitions: each Major changes the problem introduced by the one before it.</p>
+      <div className="journey-hero__cue"><span>SCROLL TO ENTER</span><i/></div>
     </header>
 
-    <div className="journey-stage">
-      <svg className="journey-path" viewBox="0 0 100 2200" preserveAspectRatio="none" aria-hidden="true">
-        <path className="journey-path__ghost" d="M50 0 C12 75,88 125,50 200 S12 325,50 400 S88 525,50 600 S12 725,50 800 S88 925,50 1000 S12 1125,50 1200 S88 1325,50 1400 S12 1525,50 1600 S88 1725,50 1800 S12 1925,50 2000 S88 2125,50 2200"/>
-        <path className="journey-path__live" pathLength="1" d="M50 0 C12 75,88 125,50 200 S12 325,50 400 S88 525,50 600 S12 725,50 800 S88 925,50 1000 S12 1125,50 1200 S88 1325,50 1400 S12 1525,50 1600 S88 1725,50 1800 S12 1925,50 2000 S88 2125,50 2200"/>
-      </svg>
-
-      {ACTS.map(act=><section className={`journey-act journey-act--${act.id}`} key={act.id}>
-        <div className="journey-act__label"><span>{act.label}</span><strong>{act.range}</strong><h2>{act.title}</h2><p>{act.text}</p></div>
-        <div className="journey-act__nodes">
-          {MAJORS.filter(c=>c.index>=act.from&&c.index<=act.to).map(card=><article className={`journey-node ${card.index%2?'is-right':'is-left'} ${active===card.index?'is-active':''}`} key={card.number}>
-            <div className="journey-node__dot" aria-hidden="true"><i/></div>
-            <div className="journey-node__content">
-              <CardThumb card={card} onOpen={setSelected}/>
-              <div className="journey-node__copy"><span>{card.number}</span><h3>{card.name}</h3><strong>{card.verb}</strong><p>{card.insight}</p><button type="button" onClick={()=>setSelected(card)}>See the transition <i>→</i></button></div>
-            </div>
-          </article>)}
-        </div>
-      </section>)}
+    <div className="journey-progress" aria-hidden="true">
+      <div className="journey-progress__track"><i/></div>
+      <div className="journey-progress__meta"><span>{activeAct.label}</span><b>{String(active+1).padStart(2,'0')} / 22</b></div>
     </div>
+
+    <main className="journey-story">
+      {ACTS.map(act=><section className={`journey-act-break journey-act-break--${act.tone}`} key={act.label}>
+        <span>{act.label} · {act.range}</span><h2>{act.title}</h2><p>{act.short}</p><i aria-hidden="true"/>
+      </section>)}
+      {MAJORS.map(card=><JourneyScene key={card.number} card={card} isActive={active===card.index} onOpen={setSelected}/>)}
+    </main>
 
     <footer className="journey-ending">
       <span>XXI → 0</span>
       <h2>Completion changes the next beginning.</h2>
-      <p>The World does not make the Fool obsolete. It makes the next Fool less naive. A completed cycle becomes context for whatever you begin next.</p>
+      <p>The World does not make the Fool obsolete. It makes the next Fool less naive. What you complete becomes context for what you begin next.</p>
+      <div className="journey-ending__ring" aria-hidden="true"><i/><i/></div>
     </footer>
+
     <FocusPanel card={selected} onClose={()=>setSelected(null)} onSelect={setSelected}/>
   </div>;
 }
