@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "audit:readings": "node scripts/audit_phase_6_2.mjs",
-    "build": "npm run audit:readings && vite build",
+    "audit:combinations": "node scripts/audit_phase_6_3.mjs",
+    "build": "npm run audit:readings && npm run audit:combinations && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
