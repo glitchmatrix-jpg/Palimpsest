@@ -1,9 +1,11 @@
 import { SectionEyebrow } from '../components/ui/Primitives';
-import CardLibrary from '../components/cards/CardLibrary';
-import LearnCourse from '../components/learn/LearnCourse';
-import FoolsJourney from '../components/journey/FoolsJourney';
-import ReadExperience from '../components/read/ReadExperience61';
-import JournalExperience from '../components/journal/JournalExperience';
+import {
+  LazyCardLibrary as CardLibrary,
+  LazyLearnCourse as LearnCourse,
+  LazyFoolsJourney as FoolsJourney,
+  LazyReadExperience as ReadExperience,
+  LazyJournalExperience as JournalExperience,
+} from './LazyRouteComponents';
 import { usePalimpsestRouter } from './router';
 
 function PageIntro({ eyebrow, title, body, children }) {
