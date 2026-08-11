@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import AppShell from '../shell/AppShell';
 import Dither from '../vendor/react-bits/Dither/Dither';
 import MoltenMetal from '../vendor/react-bits/MoltenMetal/MoltenMetal';
-import SpotlightCard from '../vendor/react-bits/SpotlightCard/SpotlightCard';
 
 const asset = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 
@@ -127,46 +127,10 @@ export default function Home() {
 
   if (entered) {
     return (
-      <main className="home home--inside">
+      <>
         <div className="inside-entry-wash" aria-hidden="true" />
-        <section className="portal-section" id="palimpsest-interface" aria-label="Palimpsest home">
-          <div className="portal-shell">
-            <button className="portal-return" type="button" onClick={returnToPortal}>
-              <span aria-hidden="true">◇</span>
-              <span>Return to portal</span>
-            </button>
-
-            <div className="portal-section__head">
-              <span className="portal-section__eyebrow">Palimpsest</span>
-              <h2>Choose a layer.</h2>
-              <p>
-                Learn the system, read cards in context, or return to the meanings you have
-                discovered over time.
-              </p>
-            </div>
-
-            <div className="portal-grid">
-              <SpotlightCard className="portal-tile">
-                <span className="portal-tile__number">I · LEARN</span>
-                <h3>Learn</h3>
-                <p>Follow the Fool’s Journey and understand suits, numbers, courts and reversals.</p>
-              </SpotlightCard>
-
-              <SpotlightCard className="portal-tile">
-                <span className="portal-tile__number">II · READ</span>
-                <h3>Read</h3>
-                <p>Interpret each position, then uncover the thread connecting the whole spread.</p>
-              </SpotlightCard>
-
-              <SpotlightCard className="portal-tile">
-                <span className="portal-tile__number">III · REFLECT</span>
-                <h3>Reflect</h3>
-                <p>Keep a private history of readings, notes and patterns that become personal.</p>
-              </SpotlightCard>
-            </div>
-          </div>
-        </section>
-      </main>
+        <AppShell onReturnToPortal={returnToPortal} />
+      </>
     );
   }
 
@@ -260,11 +224,7 @@ export default function Home() {
 
             <div className="portal-card-wrap">
               <div className="portal-card-edge" aria-hidden="true" />
-              <img
-                className="portal-card"
-                src={asset('cards/tarot_card_back.png')}
-                alt="Palimpsest tarot card back"
-              />
+              <img className="portal-card" src={asset('cards/tarot_card_back.png')} alt="Palimpsest tarot card back" />
               <div className="portal-card-sheen" aria-hidden="true" />
             </div>
           </div>
