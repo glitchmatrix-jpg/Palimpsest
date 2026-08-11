@@ -1,4 +1,5 @@
 import { buildPairRelation } from './combinationIntelligence.js';
+import { buildSpreadSystem } from './spreadSystems.js';
 
 const SUIT_DOMAINS = {
   Cups: 'feelings, relationships, attachment, pleasure and emotional needs',
@@ -199,52 +200,6 @@ function buildLayers(entries) {
   return layers;
 }
 
-function storySentence(cards, positions, question) {
-  const [a,b,c] = cards;
-  const q = clean(question);
-  const lead = q ? `For “${q}”, ` : '';
-  if (positions.join('|') === 'Past|Present|Future') {
-    return `${lead}${a.card.name} shows where the story began, ${b.card.name} describes what is shaping it now, and ${c.card.name} shows what the current pattern is moving toward.`;
-  }
-  if (positions.join('|') === 'Situation|Challenge|Advice') {
-    return `${lead}${a.card.name} names the situation, ${b.card.name} shows why it is difficult, and ${c.card.name} points to the response most likely to move it forward.`;
-  }
-  if (positions.join('|') === 'Mind|Body|Spirit') {
-    return `${lead}${a.card.name} describes the mental frame, ${b.card.name} shows how the issue is being lived in practice, and ${c.card.name} points to the deeper value or identity question underneath both.`;
-  }
-  return `${lead}${a.card.name} describes your side, ${b.card.name} describes the other side, and ${c.card.name} shows the pattern the connection is producing between you.`;
-}
-
-function threadParagraph(cards, relations) {
-  const active = relations.filter((relation) => relation.interesting);
-  const trajectory = `${cards[0].keyword} → ${cards[1].keyword} → ${cards[2].keyword}`;
-  if (active.length === 2) {
-    return `The visible movement is ${trajectory}. ${active[0].text} ${active[1].text}`;
-  }
-  if (active.length === 1) {
-    return `The visible movement is ${trajectory}, but only one adjacent pair forms a strong direct relationship. ${active[0].text} The other pair is better left as two separate positional meanings than forced into a connection the cards do not strongly support.`;
-  }
-  return `The visible movement is ${trajectory}, but neither adjacent pair forms a strong enough direct relationship to deserve a Thread interpretation. Keep the three positional meanings separate here; similarity of placement, suit or orientation is not enough reason to manufacture a story between them.`;
-}
-
-function synthesisParagraphs(cards, relations, positions, question) {
-  const [a,b,c] = cards;
-  const p1 = storySentence(cards, positions, question);
-  const p2 = threadParagraph(cards, relations);
-
-  let p3;
-  if (positions.join('|') === 'Past|Present|Future') {
-    p3 = `Put simply: the past brought you into ${a.keyword}, the present is asking you to deal with ${b.keyword}, and the future card suggests that ${c.keyword} becomes increasingly important if this course continues. The future is not fixed; ${c.card.name} is showing the kind of outcome your current choices are making more plausible.`;
-  } else if (positions.join('|') === 'Situation|Challenge|Advice') {
-    p3 = `Put simply: the situation centers on ${a.keyword}, the real difficulty is ${b.keyword}, and ${c.card.name} offers ${c.keyword} as the response to test. Whether the pair relationships are strong or weak, the positional logic still matters.`;
-  } else if (positions.join('|') === 'Mind|Body|Spirit') {
-    p3 = `Put simply: what you think is happening, what you are actually living, and what the situation means to you may not be perfectly aligned. The useful work is to notice where ${a.keyword}, ${b.keyword}, and ${c.keyword} genuinely support or challenge one another — without assuming every transition must contain a hidden message.`;
-  } else {
-    p3 = `Put simply: ${a.card.name} describes your side, ${b.card.name} describes the other person's observable side, and ${c.card.name} describes the relationship pattern. Where The Thread finds a strong connection, use it; where it does not, do not substitute mind-reading or a neat story for evidence.`;
-  }
-  return [p1,p2,p3];
-}
-
 function buildReflection(cards, positions) {
   const [a,b,c] = cards;
   if (positions.join('|') === 'Past|Present|Future') {
@@ -281,13 +236,13 @@ export function buildDeepReading(entries, positions, question='') {
     relationBetween(entries[0],entries[1],positions[0],positions[1]),
     relationBetween(entries[1],entries[2],positions[1],positions[2]),
   ];
-  const synthesis = synthesisParagraphs(cards,relations,positions,question);
+  const spreadSystem = buildSpreadSystem(cards,relations,positions,question);
   return {
     cards,
     relations,
     trajectory: cards.map((c)=>c.keyword).join(' → '),
-    summary: synthesis[0],
-    synthesis,
+    summary: spreadSystem.summary,
+    synthesis: spreadSystem.synthesis,
     layers: buildLayers(entries),
     reflection: buildReflection(cards,positions),
   };
