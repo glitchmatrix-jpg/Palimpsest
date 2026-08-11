@@ -2,6 +2,7 @@ import { CardFrame, SectionEyebrow } from '../components/ui/Primitives';
 import CardLibrary from '../components/cards/CardLibrary';
 import LearnCourse from '../components/learn/LearnCourse';
 import FoolsJourney from '../components/journey/FoolsJourney';
+import ReadExperience from '../components/read/ReadExperience';
 import { usePalimpsestRouter } from './router';
 
 function PageIntro({ eyebrow, title, body, children }) {
@@ -45,19 +46,7 @@ export function CardsView() {
 }
 
 export function ReadView() {
-  return (
-    <div className="shell-page shell-page--read">
-      <PageIntro eyebrow="III · Read" title="Read the cards in context." body="Choose a spread, place cards, and uncover the thread connecting the whole reading." />
-      <div className="shell-reading-preview">
-        {['Past','Present','Future'].map((label) => (
-          <CardFrame className="shell-reading-slot" key={label}>
-            <span>{label}</span>
-            <img src={`${import.meta.env.BASE_URL}cards/tarot_card_back.png`} alt="Tarot card back" />
-          </CardFrame>
-        ))}
-      </div>
-    </div>
-  );
+  return <ReadExperience />;
 }
 
 export function JournalView() {
