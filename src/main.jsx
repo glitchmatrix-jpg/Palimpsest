@@ -10,6 +10,7 @@ import './styles/portal-transition.css';
 import './styles/shell.css';
 import './styles/cards.css';
 import './styles/cards-modal-fix.css';
+import './styles/learn.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
