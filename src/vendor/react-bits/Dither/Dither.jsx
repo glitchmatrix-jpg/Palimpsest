@@ -9,6 +9,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { EffectComposer, wrapEffect } from '@react-three/postprocessing';
 import { Effect } from 'postprocessing';
 import * as THREE from 'three';
+import { detectGraphicsMode } from '../../../utils/graphics';
 import './Dither.css';
 
 const waveVertexShader = `
@@ -205,8 +206,9 @@ export default function Dither({
   waveSpeed=.05, waveFrequency=3, waveAmplitude=.3, waveColor=[.5,.5,.5],
   colorNum=4, pixelSize=2, disableAnimation=false, enableMouseInteraction=true, mouseRadius=1
 }) {
+  if (detectGraphicsMode()==='off') return null;
   return (
-    <Canvas className="dither-container" camera={{position:[0,0,6]}} dpr={1} gl={{antialias:true}}>
+    <Canvas className="dither-container" camera={{position:[0,0,6]}} dpr={1} gl={{antialias:true}} fallback={null}>
       <DitheredWaves {...{waveSpeed,waveFrequency,waveAmplitude,waveColor,colorNum,pixelSize,disableAnimation,enableMouseInteraction,mouseRadius}} />
     </Canvas>
   );
