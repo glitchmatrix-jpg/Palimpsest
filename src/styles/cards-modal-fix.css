@@ -1,4 +1,5 @@
-/* Phase 3 modal fix — render detail as a true viewport layer. */
+/* Phase 3 modal fix — stable viewport-native detail layout. */
+
 .card-focus {
   position: fixed;
   inset: 0;
@@ -7,7 +8,7 @@
   place-items: center;
   padding: clamp(16px, 3vw, 32px);
   overflow: hidden;
-  background: rgba(8, 4, 13, .68);
+  background: rgba(8, 4, 13, .72);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
@@ -15,25 +16,29 @@
 .card-focus__panel {
   position: relative;
   width: min(1120px, calc(100vw - 48px));
-  height: auto;
   max-height: calc(100dvh - 48px);
   overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
   -webkit-overflow-scrolling: touch;
   display: grid;
-  grid-template-columns: minmax(280px, .82fr) minmax(360px, 1.18fr);
+  grid-template-columns: minmax(280px, .86fr) minmax(360px, 1.14fr);
+  align-items: start;
   gap: clamp(34px, 5vw, 72px);
   padding: clamp(30px, 4vw, 54px);
   border-radius: 34px;
 }
 
+/* Important: keep the close control out of the grid flow. */
 .card-focus__close {
-  position: sticky;
-  top: 0;
-  margin-left: auto;
-  float: right;
-  z-index: 20;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 30;
+  margin: 0;
+  float: none;
+  background: rgba(24, 14, 32, .82);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -43,62 +48,87 @@
   min-width: 0;
 }
 
+.card-focus__art-column {
+  position: sticky;
+  top: 0;
+  align-self: start;
+}
+
 .card-focus__content {
   padding-top: 8px;
 }
 
+.card-focus__image-wrap {
+  width: min(100%, 320px);
+}
+
 @media (max-width: 760px) {
+  body.card-modal-open .shell-nav--mobile,
+  body.card-modal-open .shell-header,
+  body.card-modal-open .shell-rule {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .card-focus {
     display: block;
     padding: 0;
     overflow: hidden;
-    background: rgba(8, 4, 13, .82);
+    background: #0d0715;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .card-focus__panel {
+    position: fixed;
+    inset: 0;
     width: 100vw;
     height: 100dvh;
-    max-height: 100dvh;
+    max-height: none;
     margin: 0;
+    border: 0;
     border-radius: 0;
-    border-left: 0;
-    border-right: 0;
     display: block;
     padding:
-      calc(18px + env(safe-area-inset-top))
-      20px
-      calc(96px + env(safe-area-inset-bottom));
+      calc(20px + env(safe-area-inset-top))
+      18px
+      calc(34px + env(safe-area-inset-bottom));
     overflow-y: auto;
+    overflow-x: hidden;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    background:
+      radial-gradient(circle at 50% 12%, rgba(101, 55, 146, .18), transparent 34%),
+      linear-gradient(180deg, #171020 0%, #21142a 100%);
   }
 
   .card-focus__close {
-    position: sticky;
-    top: 0;
-    float: right;
-    margin: 0 0 8px auto;
-    background: rgba(24, 14, 32, .92);
+    position: fixed;
+    top: calc(14px + env(safe-area-inset-top));
+    right: 16px;
+    z-index: 40;
+    background: rgba(24, 14, 32, .94);
   }
 
   .card-focus__art-column {
-    clear: both;
-    padding-top: 2px;
+    position: static;
+    padding-top: 30px;
   }
 
   .card-focus__eyebrow {
-    padding-right: 46px;
+    padding-right: 48px;
+    margin-bottom: 8px;
   }
 
   .card-focus h2 {
-    font-size: clamp(2.2rem, 12vw, 3.35rem);
+    font-size: clamp(2.15rem, 11vw, 3.15rem);
     line-height: .98;
     margin-bottom: 20px;
-    padding-right: 0;
+    padding-right: 44px;
   }
 
   .card-focus__image-wrap {
-    width: min(68vw, 260px);
+    width: min(62vw, 238px);
     margin: 0 auto 26px;
   }
 
@@ -107,14 +137,12 @@
   }
 
   .orientation-switch {
-    position: sticky;
-    top: 8px;
-    z-index: 10;
+    position: static;
     width: 100%;
     margin: 0 0 18px;
-    background: rgba(24, 14, 32, .94);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, .035);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .orientation-switch button {
@@ -122,11 +150,21 @@
   }
 
   .card-focus__keywords {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
   .card-focus__content section {
     padding: 18px 0;
+  }
+
+  .card-focus__content p {
+    font-size: .98rem;
+    line-height: 1.66;
+  }
+
+  .card-focus__symbols {
+    display: grid;
+    gap: 8px;
   }
 }
 
@@ -137,6 +175,15 @@
   }
 
   .card-focus__image-wrap {
-    width: min(72vw, 245px);
+    width: min(68vw, 228px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-focus,
+  .card-focus__panel,
+  .card-focus__image-wrap {
+    animation: none !important;
+    transition: none !important;
   }
 }
