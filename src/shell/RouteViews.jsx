@@ -1,6 +1,8 @@
 import { CardFrame, SectionEyebrow } from '../components/ui/Primitives';
 import CardLibrary from '../components/cards/CardLibrary';
 import LearnCourse from '../components/learn/LearnCourse';
+import FoolsJourney from '../components/journey/FoolsJourney';
+import { usePalimpsestRouter } from './router';
 
 function PageIntro({ eyebrow, title, body, children }) {
   return (
@@ -14,12 +16,23 @@ function PageIntro({ eyebrow, title, body, children }) {
 }
 
 export function LearnView() {
+  const { navigate } = usePalimpsestRouter();
   return (
     <div className="shell-page shell-page--learn">
       <PageIntro eyebrow="I · Learn" title="Learn the system, then read without a crutch." body="Tarot becomes easier when you stop memorizing seventy-eight isolated answers. Learn the structure underneath the deck, then use context to make the reading specific." />
+      <button className="journey-launch" type="button" onClick={() => navigate('/journey')}>
+        <span>THE MAJOR ARCANA</span>
+        <strong>Walk the Fool’s Journey</strong>
+        <p>Twenty-two cards as one continuous sequence of development, crisis, correction and integration.</p>
+        <i>Enter journey →</i>
+      </button>
       <LearnCourse />
     </div>
   );
+}
+
+export function JourneyView() {
+  return <FoolsJourney />;
 }
 
 export function CardsView() {
