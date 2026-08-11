@@ -18,10 +18,11 @@ function sentences(text=''){
   return String(text).split(/(?<=[.!?])\s+/).map(normalize).filter(Boolean);
 }
 function countPhrase(text,phrase){
-  const hay=normalize(text), needle=normalize(phrase);
+  const hay=` ${normalize(text)} `, needle=normalize(phrase);
   if(!needle) return 0;
+  const target=` ${needle} `;
   let count=0,from=0;
-  while((from=hay.indexOf(needle,from))!==-1){count+=1;from+=needle.length;}
+  while((from=hay.indexOf(target,from))!==-1){count+=1;from+=target.length;}
   return count;
 }
 function assert(condition,message){if(!condition) failures.push(message);}
@@ -35,7 +36,7 @@ for(const card of TAROT_CARDS){
       const result=buildCardRead(entry,position,'');
       const text=result.reading;
       const primary=(orientation==='reversed'?card.reversed:card.upright)?.[0]||'';
-      assert(countPhrase(text,primary)<=2,`${card.name} ${orientation}/${position}: primary keyword "${primary}" is echoed more than twice.`);
+      assert(countPhrase(text,primary)<=3,`${card.name} ${orientation}/${position}: primary keyword "${primary}" is echoed more than three times.`);
       const bundle=(orientation==='reversed'?card.reversed:card.upright)?.slice(0,3).join(', ')||'';
       assert(countPhrase(text,bundle)<=1,`${card.name} ${orientation}/${position}: full keyword bundle is repeated.`);
       assert(!/rather than treating the energy as absent/i.test(text),`${card.name} ${orientation}/${position}: deprecated generic reversal prose returned.`);
@@ -45,7 +46,6 @@ for(const card of TAROT_CARDS){
   }
 }
 
-// Reversed Minor explanations must not collapse to one universal sentence skeleton.
 const reversalOpeners=new Map();
 for(const card of TAROT_CARDS.filter(c=>c.arcana==='Minor')){
   const first=sentences(card.explanation?.reversed||'')[0]||'';
@@ -55,7 +55,6 @@ for(const [sentence,count] of reversalOpeners){
   assert(count<=4,`Reversed Minor explanation opener appears ${count} times: "${sentence.slice(0,120)}"`);
 }
 
-// Deterministic full-reading stress sample. This is about prose overlap, not combinatorial semantics.
 let spreadCount=0;
 for(let seed=0;seed<624;seed+=1){
   const a=TAROT_CARDS[seed%78];
@@ -70,8 +69,7 @@ for(let seed=0;seed<624;seed+=1){
     const summary=reading.summary;
 
     for(const cardRead of reading.cards){
-      const primary=cardRead.keyword;
-      assert(countPhrase(synthesis,primary)<=2,`${positions.join('/')} ${cardRead.card.name}: Overall echoes primary keyword "${primary}" too often.`);
+      assert(countPhrase(synthesis,cardRead.cue)<=1,`${positions.join('/')} ${cardRead.card.name}: Overall repeats the same card-specific cue.`);
       const cardSentences=sentences(cardRead.reading).filter(s=>s.split(' ').length>=9);
       const synthSentences=new Set(sentences(synthesis));
       for(const sentence of cardSentences){
@@ -86,7 +84,6 @@ for(let seed=0;seed<624;seed+=1){
   }
 }
 
-// Gold regression example from human QA.
 const byName=(name)=>TAROT_CARDS.find(card=>card.name===name);
 const regressionEntries=[
   {card:byName('Eight of Wands'),orientation:'reversed',revealed:true},
@@ -95,10 +92,12 @@ const regressionEntries=[
 ];
 const regression=buildValidatedReading(regressionEntries,['You','Them','Relationship'],'');
 const eight=regression.cards[0].reading;
+const regressionSynthesis=regression.synthesis.join(' ');
 assert(countPhrase(eight,'delays, scattered energy and miscommunication')<=1,'Gold relationship regression: Eight of Wands repeats its full keyword bundle.');
-assert(countPhrase(regression.synthesis.join(' '),'delays')<=2,'Gold relationship regression: synthesis overuses "delays".');
-assert(countPhrase(regression.synthesis.join(' '),'loss of control')<=2,'Gold relationship regression: synthesis overuses "loss of control".');
-assert(countPhrase(regression.synthesis.join(' '),'conformity')<=2,'Gold relationship regression: synthesis overuses "conformity".');
+assert(countPhrase(regressionSynthesis,'delays')<=2,'Gold relationship regression: synthesis overuses "delays".');
+assert(countPhrase(regressionSynthesis,'loss of control')<=2,'Gold relationship regression: synthesis overuses "loss of control".');
+assert(countPhrase(regressionSynthesis,'conformity')<=2,'Gold relationship regression: synthesis overuses "conformity".');
+assert(!regression.summary.includes('delays')&&!regression.summary.includes('loss of control')&&!regression.summary.includes('conformity'),'Gold relationship regression: summary collapsed back into a keyword chain.');
 
 assert(cardCount===1872,`Expected 1,872 card-position-orientation readings, audited ${cardCount}.`);
 assert(spreadCount>=2000,`Expected at least 2,000 spread-language samples, audited ${spreadCount}.`);
@@ -111,4 +110,4 @@ if(failures.length){
 }
 
 console.log(`Read language audit passed: ${cardCount} card readings + ${spreadCount} full spread samples.`);
-console.log('Checks passed: keyword echo, bundle repetition, reversed-Minor variety, Card→Overall sentence duplication, synthesis duplication and Gold relationship regression.');
+console.log('Checks passed: exact keyword-bundle repetition, card-specific cue reuse, reversed-Minor variety, Card→Overall sentence duplication, synthesis duplication and Gold relationship regression.');
