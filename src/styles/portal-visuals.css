@@ -129,64 +129,77 @@
     radial-gradient(circle at 84% 46%, rgba(255,232,169,.58) 0 1px, transparent 2px);
 }
 
-/* Mobile: punchier center, much less line noise, clearer hierarchy. */
+/* Mobile: preserve the desktop midnight-violet identity while simplifying line noise. */
 @media (pointer: coarse), (max-width: 600px) {
+  .hero {
+    background:
+      radial-gradient(circle at 50% 54%, rgba(82,39,128,.20), transparent 40%),
+      radial-gradient(circle at 50% 54%, rgba(214,180,92,.045), transparent 60%),
+      #0d0715;
+  }
+
   .hero__field {
-    opacity: 1;
+    opacity: .82;
     transform: scale(1.16);
   }
 
   .hero__field canvas {
-    filter: saturate(1.9) contrast(1.42) brightness(1.04);
+    filter: hue-rotate(-12deg) saturate(1.18) contrast(1.28) brightness(.82);
   }
 
   .hero__field::after {
-    opacity: .11;
+    opacity: .08;
     background-size: 5px 5px;
     mask-image: radial-gradient(circle at 50% 54%, transparent 0 34%, #000 58%, #000 100%);
     -webkit-mask-image: radial-gradient(circle at 50% 54%, transparent 0 34%, #000 58%, #000 100%);
   }
 
   .hero__metal {
-    width: 118vw;
+    width: 112vw;
     inset: 54% auto auto 50%;
-    opacity: .88;
-    filter: saturate(1.26) contrast(1.12) brightness(1.05);
-    mask-image: radial-gradient(circle, #000 0 22%, rgba(0,0,0,.92) 34%, rgba(0,0,0,.34) 52%, transparent 68%);
-    -webkit-mask-image: radial-gradient(circle, #000 0 22%, rgba(0,0,0,.92) 34%, rgba(0,0,0,.34) 52%, transparent 68%);
+    opacity: .72;
+    filter: hue-rotate(-7deg) saturate(1.08) contrast(1.10) brightness(.88);
+    mask-image: radial-gradient(circle, #000 0 20%, rgba(0,0,0,.88) 34%, rgba(0,0,0,.28) 50%, transparent 66%);
+    -webkit-mask-image: radial-gradient(circle, #000 0 20%, rgba(0,0,0,.88) 34%, rgba(0,0,0,.28) 50%, transparent 66%);
   }
 
-  .hero__rays { opacity: .07; }
-  .hero__depth--far { opacity: .26; }
-  .hero__depth--near { opacity: .15; }
+  .hero__rays { opacity: .055; }
+  .hero__depth--far { opacity: .22; }
+  .hero__depth--near { opacity: .12; }
   .hero__rings {
-    opacity: .30;
-    border-color: rgba(214,180,92,.055);
+    opacity: .24;
+    border-color: rgba(214,180,92,.045);
     box-shadow:
-      0 0 0 34px rgba(111,63,168,.010),
-      0 0 74px rgba(98,51,149,.13);
+      0 0 0 34px rgba(111,63,168,.008),
+      0 0 68px rgba(98,51,149,.10);
+  }
+
+  .hero__vignette {
+    background:
+      radial-gradient(ellipse at 50% 53%, transparent 0 24%, rgba(13,7,21,.10) 46%, rgba(9,4,15,.58) 82%, rgba(5,2,9,.90) 100%),
+      linear-gradient(to bottom, rgba(5,2,9,.24), transparent 18%, transparent 82%, rgba(5,2,9,.48));
   }
 
   .hero__card-halo {
     width: 225%;
     filter: blur(24px);
     background: radial-gradient(circle,
-      rgba(255,229,151,.29) 0,
-      rgba(214,180,92,.16) 16%,
-      rgba(128,72,184,.22) 31%,
+      rgba(255,229,151,.25) 0,
+      rgba(214,180,92,.13) 16%,
+      rgba(110,59,165,.18) 31%,
       transparent 67%);
   }
 
   .portal-card {
     box-shadow:
-      0 28px 62px rgba(0,0,0,.58),
+      0 28px 62px rgba(0,0,0,.62),
       0 0 0 1px rgba(242,219,150,.46),
-      0 0 30px rgba(135,78,195,.29),
-      0 0 62px rgba(214,180,92,.14);
+      0 0 26px rgba(115,61,174,.25),
+      0 0 52px rgba(214,180,92,.11);
   }
 
-  .hero__particles::before { opacity: .32; }
-  .hero__particles::after { opacity: .16; transform: none; }
+  .hero__particles::before { opacity: .28; }
+  .hero__particles::after { opacity: .12; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
