@@ -1,0 +1,97 @@
+/* Phase 5 performance pass — preserve the cinematic look without full-screen GPU churn. */
+
+/* The WebGL Threads canvas was the largest continuous cost on long/mobile pages.
+   Hide it and recreate the atmosphere with compositor-friendly gradients below. */
+.journey-fixed__threads{display:none!important}
+
+.journey-fixed::before,
+.journey-fixed::after{
+  content:'';
+  position:absolute;
+  pointer-events:none;
+  will-change:transform;
+}
+.journey-fixed::before{
+  inset:-18%;
+  opacity:.22;
+  background:
+    repeating-radial-gradient(ellipse at 48% 52%,transparent 0 64px,rgba(143,97,176,.09) 65px,transparent 66px 114px),
+    conic-gradient(from 18deg at 50% 50%,transparent 0 11%,rgba(214,180,92,.055) 12%,transparent 13% 37%,rgba(118,70,157,.06) 38%,transparent 39% 100%);
+  transform:rotate(-3deg) scale(1.03);
+  animation:journeyAtmosphereDrift 18s ease-in-out infinite alternate;
+}
+.journey-fixed::after{
+  width:min(74vw,980px);
+  aspect-ratio:1;
+  left:50%;
+  top:50%;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(var(--act-glow),.13),rgba(var(--act-glow),.035) 42%,transparent 68%);
+  opacity:.85;
+  transition:background .8s ease;
+}
+
+/* Replace huge blurred layers with already-soft radial gradients. */
+.journey-fixed__orb{filter:none!important;animation:none!important;opacity:.2!important}
+.journey-fixed__orb--a{
+  background:radial-gradient(circle,rgba(var(--act-glow),.42) 0%,rgba(var(--act-glow),.12) 38%,transparent 72%)!important
+}
+.journey-fixed__orb--b{
+  background:radial-gradient(circle,rgba(214,180,92,.18) 0%,rgba(114,65,151,.07) 42%,transparent 72%)!important
+}
+
+/* A moving full-screen star texture is unnecessary; the static layer still reads as depth. */
+.journey-fixed__stars{animation:none!important;opacity:.18!important}
+
+/* Let the browser skip layout/paint for the ~20 scenes nowhere near the viewport. */
+.journey-scene{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 100svh;
+  contain:layout paint style;
+}
+
+/* Avoid animated CSS filters: they trigger expensive repaints on large card regions. */
+.journey-scene__card-wrap{filter:none!important;will-change:transform}
+.journey-scene:not(.is-active) .journey-scene__card-wrap{opacity:.58}
+.journey-scene.is-active .journey-scene__card-wrap{opacity:1}
+.journey-scene__halo{filter:none!important}
+.journey-scene__ghost{filter:none!important;will-change:auto}
+.journey-scene__copy{will-change:transform,opacity}
+.journey-scene__card{will-change:transform}
+
+/* Only the active scene needs decorative neighboring cards and pulse animation. */
+.journey-scene:not(.is-active) .journey-scene__ghost,
+.journey-scene:not(.is-active) .journey-scene__pulse{display:none}
+
+/* Backdrop blur over an entire screen is especially costly on mobile. */
+.journey-focus{backdrop-filter:none!important;background:rgba(5,3,9,.9)!important}
+.journey-focus__panel{backdrop-filter:none!important}
+
+@keyframes journeyAtmosphereDrift{
+  from{transform:rotate(-3deg) scale(1.03) translate3d(-.4%,0,0)}
+  to{transform:rotate(1deg) scale(1.045) translate3d(.4%,-.25%,0)}
+}
+
+@media(max-width:650px){
+  /* Mobile gets the same composition but a much stricter effect budget. */
+  .journey-fixed::before{animation:none;opacity:.16}
+  .journey-fixed::after{width:125vw;opacity:.7}
+  .journey-fixed__orb{display:none!important}
+  .journey-fixed__stars{opacity:.12!important}
+  .journey-scene__ghost{display:none!important}
+  .journey-scene__pulse i{animation:none!important}
+  .journey-scene__sheen{display:none!important}
+  .journey-scene,
+  .journey-scene.is-active{transform:none!important}
+  .journey-scene__card-wrap,
+  .journey-scene.is-active .journey-scene__card-wrap{transform:none!important;opacity:1}
+  .journey-scene__copy,
+  .journey-scene.is-active .journey-scene__copy{transform:none!important;opacity:1}
+  .journey-scene__handoff,
+  .journey-scene.is-active .journey-scene__handoff{transform:none!important;opacity:1}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .journey-fixed::before{animation:none!important}
+}
