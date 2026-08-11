@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import AppShell from '../shell/AppShell';
-import Dither from '../vendor/react-bits/Dither/Dither';
-import MoltenMetal from '../vendor/react-bits/MoltenMetal/MoltenMetal';
+import AppShell from '../shell/LazyAppShell';
+import { DitherGate as Dither, MoltenGate as MoltenMetal } from '../components/performance/PortalEffects';
 
 const asset = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 
