@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react';
 import SpotlightCard from '../../vendor/react-bits/SpotlightCard/SpotlightCard';
-import { TAROT_CARDS } from '../../data/cardLibrary';
+import { TAROT_CARDS } from '../../data/tarotDataset';
+import { saveReading } from '../../storage/journalStore';
 import { buildValidatedReading } from './readEngine65';
+import { buildReadingSnapshot } from './readingSnapshot';
 
 const asset = (path) => `${import.meta.env.BASE_URL}${path}`;
 const QUESTION_MAX = 280;
+const NOTE_MAX = 1800;
 
 const SPREADS = [
   { id:'past-present-future', name:'Past · Present · Future', short:'Trace how the situation formed, what is active now, and where the current pattern points.', positions:['Past','Present','Future'] },
@@ -60,6 +63,9 @@ export default function ReadExperience61(){
   const [allowReversals,setAllowReversals]=useState(true);
   const [entries,setEntries]=useState([null,null,null]);
   const [pickerIndex,setPickerIndex]=useState(null);
+  const [journalNote,setJournalNote]=useState('');
+  const [savedReadingId,setSavedReadingId]=useState(null);
+  const [saveStatus,setSaveStatus]=useState('');
   const spread=SPREADS.find(item=>item.id===spreadId)||SPREADS[0];
   const allChosen=entries.every(Boolean);
   const allRevealed=entries.every(entry=>entry?.revealed);
@@ -68,12 +74,22 @@ export default function ReadExperience61(){
   const hasLayers=Boolean(analysis?.layers?.length);
   const reflectionNumber=hasLayers?'04':'03';
 
-  const begin=()=>{setEntries(method==='digital'?shuffledDraw(3,allowReversals):[null,null,null]);setStage('deal');window.scrollTo({top:0,behavior:'smooth'});};
+  const begin=()=>{setEntries(method==='digital'?shuffledDraw(3,allowReversals):[null,null,null]);setStage('deal');setJournalNote('');setSavedReadingId(null);setSaveStatus('');window.scrollTo({top:0,behavior:'smooth'});};
   const chooseManual=(entry)=>{setEntries(current=>current.map((item,index)=>index===pickerIndex?entry:item));setPickerIndex(null);};
   const reveal=index=>setEntries(current=>current.map((item,i)=>i===index?{...item,revealed:true}:item));
   const revealAll=()=>setEntries(current=>current.map(item=>item?{...item,revealed:true}:item));
-  const reset=()=>{setStage('setup');setEntries([null,null,null]);setPickerIndex(null);window.scrollTo({top:0,behavior:'smooth'});};
-  const changeReversals=(enabled)=>{setAllowReversals(enabled);setEntries([null,null,null]);setPickerIndex(null);};
+  const reset=()=>{setStage('setup');setEntries([null,null,null]);setPickerIndex(null);setJournalNote('');setSavedReadingId(null);setSaveStatus('');window.scrollTo({top:0,behavior:'smooth'});};
+  const changeReversals=(enabled)=>{setAllowReversals(enabled);setEntries([null,null,null]);setPickerIndex(null);setJournalNote('');setSavedReadingId(null);setSaveStatus('');};
+  const saveToJournal=async()=>{
+    if(!analysis||!allRevealed)return;
+    setSaveStatus('Saving…');
+    try{
+      const snapshot=buildReadingSnapshot({analysis,entries,spread,spreadId,question,method,allowReversals,note:journalNote});
+      const saved=await saveReading(savedReadingId?{...snapshot,id:savedReadingId}:snapshot);
+      setSavedReadingId(saved.id);
+      setSaveStatus('Saved locally to Journal.');
+    }catch(error){setSaveStatus(error.message||'Could not save this reading.');}
+  };
 
   return <div className={`read-experience read-experience--${stage}`}>
     <div className="read-atmosphere" aria-hidden="true"><i/><i/><i/><i/></div>
@@ -99,7 +115,7 @@ export default function ReadExperience61(){
 
       {hasLayers&&<section className="reading-layer reading-layer--layers"><div className="reading-layer__title"><span>03</span><div><small>THE LAYERS</small><h2>What stands out across the whole spread?</h2><p>This section only appears when a pattern adds information the individual cards and Thread do not already give you.</p></div></div><div className="layers-grid">{analysis.layers.map(layer=><div className="layer-card" key={layer.id||layer.title}><span>◇</span><h3>{layer.title}</h3><strong>{layer.lead}</strong><p>{layer.text}</p></div>)}</div></section>}
 
-      <section className="reading-layer reading-layer--reflection"><div className="reading-layer__title"><span>{reflectionNumber}</span><div><small>REFLECTION</small><h2>What do you do with the reading?</h2><p>Use these after you have read the story, not instead of reading it.</p></div></div><div className="reflection-list">{analysis.reflection.map((item,index)=><div key={item}><span>0{index+1}</span><p>{item}</p></div>)}</div><div className="reading-close"><div><strong>OVERALL READING</strong>{analysis.synthesis.map((paragraph,index)=><p key={index}>{paragraph}</p>)}</div><button type="button" onClick={reset}>New reading</button></div></section>
+      <section className="reading-layer reading-layer--reflection"><div className="reading-layer__title"><span>{reflectionNumber}</span><div><small>REFLECTION</small><h2>What do you do with the reading?</h2><p>Use these after you have read the story, not instead of reading it.</p></div></div><div className="reflection-list">{analysis.reflection.map((item,index)=><div key={item}><span>0{index+1}</span><p>{item}</p></div>)}</div><div className="reading-close"><div><strong>OVERALL READING</strong>{analysis.synthesis.map((paragraph,index)=><p key={index}>{paragraph}</p>)}</div><div className="reading-save"><label><span>SAVE TO JOURNAL</span><textarea value={journalNote} maxLength={NOTE_MAX} rows="5" onChange={(event)=>{setJournalNote(event.target.value);setSaveStatus(savedReadingId?'Note changed — save again to update.':'');}} placeholder="Optional note: what resonated, what happened, or what do you want to remember?"/><small>{journalNote.length}/{NOTE_MAX}</small></label><div><small role="status">{saveStatus}</small><button type="button" onClick={saveToJournal}>{savedReadingId?'Update saved reading':'Save reading'}</button></div></div><button type="button" onClick={reset}>New reading</button></div></section>
     </article>}
 
     {pickerIndex!==null&&<CardPicker usedIds={new Set(entries.filter(Boolean).map(entry=>entry.card.id))} onChoose={chooseManual} onClose={()=>setPickerIndex(null)} allowReversals={allowReversals}/>} 
