@@ -1,5 +1,6 @@
 import { CardFrame, SectionEyebrow } from '../components/ui/Primitives';
 import CardLibrary from '../components/cards/CardLibrary';
+import LearnCourse from '../components/learn/LearnCourse';
 
 function PageIntro({ eyebrow, title, body, children }) {
   return (
@@ -15,12 +16,8 @@ function PageIntro({ eyebrow, title, body, children }) {
 export function LearnView() {
   return (
     <div className="shell-page shell-page--learn">
-      <PageIntro eyebrow="I · Learn" title="Learn the symbolic system." body="Build fluency with the Major and Minor Arcana, numbers, courts, reversals and the flow between cards." />
-      <div className="shell-feature-grid">
-        <CardFrame><span className="shell-card-index">01</span><h2>Start Here</h2><p>Major vs Minor Arcana, upright and reversed meanings, and how a reading works.</p></CardFrame>
-        <CardFrame><span className="shell-card-index">02</span><h2>The Fool’s Journey</h2><p>Follow all twenty-two Major Arcana as one connected visual story.</p></CardFrame>
-        <CardFrame><span className="shell-card-index">03</span><h2>The Four Suits</h2><p>Cups feel. Swords think. Wands act. Pentacles build.</p></CardFrame>
-      </div>
+      <PageIntro eyebrow="I · Learn" title="Learn the system, then read without a crutch." body="Tarot becomes easier when you stop memorizing seventy-eight isolated answers. Learn the structure underneath the deck, then use context to make the reading specific." />
+      <LearnCourse />
     </div>
   );
 }
