@@ -29,13 +29,11 @@ function CardTile({ card, onOpen }) {
 function CardDetail({ card, onClose }) {
   const [orientation, setOrientation] = useState('upright');
   const closeRef = useRef(null);
-  const panelRef = useRef(null);
 
   useEffect(() => {
     const oldOverflow = document.body.style.overflow;
-    const oldOverscroll = document.body.style.overscrollBehavior;
     document.body.style.overflow = 'hidden';
-    document.body.style.overscrollBehavior = 'none';
+    document.body.classList.add('card-modal-open');
     closeRef.current?.focus();
 
     const onKey = (event) => {
@@ -45,14 +43,10 @@ function CardDetail({ card, onClose }) {
     window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = oldOverflow;
-      document.body.style.overscrollBehavior = oldOverscroll;
+      document.body.classList.remove('card-modal-open');
       window.removeEventListener('keydown', onKey);
     };
   }, [onClose]);
-
-  useEffect(() => {
-    panelRef.current?.scrollTo({ top: 0, behavior: 'auto' });
-  }, [card]);
 
   const reversed = orientation === 'reversed';
   const keywords = reversed ? card.reversed : card.upright;
@@ -64,7 +58,7 @@ function CardDetail({ card, onClose }) {
     ? `Where might ${keywords[0]} be operating internally, indirectly or in excess right now?`
     : `Where is ${keywords[0]} already present, and what would it look like to engage with it deliberately?`;
 
-  const dialog = (
+  const modal = (
     <div
       className="card-focus"
       role="dialog"
@@ -74,7 +68,7 @@ function CardDetail({ card, onClose }) {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="card-focus__panel" ref={panelRef}>
+      <div className="card-focus__panel">
         <button ref={closeRef} className="card-focus__close" type="button" onClick={onClose} aria-label="Close card detail">×</button>
 
         <div className="card-focus__art-column">
@@ -116,7 +110,7 @@ function CardDetail({ card, onClose }) {
     </div>
   );
 
-  return createPortal(dialog, document.body);
+  return createPortal(modal, document.body);
 }
 
 export default function CardLibrary() {
