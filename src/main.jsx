@@ -11,6 +11,7 @@ import './styles/shell.css';
 import './styles/cards.css';
 import './styles/cards-modal-fix.css';
 import './styles/learn.css';
+import './styles/learn-polish.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
