@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import Modal from '../components/ui/Modal';
 import { usePalimpsestRouter } from './router';
-import { CardsView, JournalView, LearnView, NotFoundView, ReadView } from './RouteViews';
+import { CardsView, JournalView, JourneyView, LearnView, NotFoundView, ReadView } from './RouteViews';
 
 const NAV_ITEMS = [
   { route: '/learn', label: 'Learn', glyph: '◇' },
@@ -12,10 +12,13 @@ const NAV_ITEMS = [
 
 const ROUTES = {
   '/learn': LearnView,
+  '/journey': JourneyView,
   '/cards': CardsView,
   '/read': ReadView,
   '/journal': JournalView
 };
+
+const isNavActive = (route, itemRoute) => itemRoute === '/learn' ? route === '/learn' || route === '/journey' : route === itemRoute;
 
 export default function AppShell({ onReturnToPortal }) {
   const { route, navigate } = usePalimpsestRouter();
@@ -33,17 +36,20 @@ export default function AppShell({ onReturnToPortal }) {
         </button>
 
         <nav className="shell-nav shell-nav--desktop" aria-label="Primary navigation">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.route}
-              type="button"
-              className={route === item.route ? 'is-active' : ''}
-              onClick={() => navigate(item.route)}
-              aria-current={route === item.route ? 'page' : undefined}
-            >
-              {item.label}
-            </button>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const active = isNavActive(route, item.route);
+            return (
+              <button
+                key={item.route}
+                type="button"
+                className={active ? 'is-active' : ''}
+                onClick={() => navigate(item.route)}
+                aria-current={active ? 'page' : undefined}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </nav>
 
         <div className="shell-header__actions">
@@ -61,18 +67,21 @@ export default function AppShell({ onReturnToPortal }) {
       </section>
 
       <nav className="shell-nav shell-nav--mobile" aria-label="Primary navigation">
-        {NAV_ITEMS.map((item) => (
-          <button
-            key={item.route}
-            type="button"
-            className={route === item.route ? 'is-active' : ''}
-            onClick={() => navigate(item.route)}
-            aria-current={route === item.route ? 'page' : undefined}
-          >
-            <span className="shell-mobile-glyph" aria-hidden="true">{item.glyph}</span>
-            <span>{item.label}</span>
-          </button>
-        ))}
+        {NAV_ITEMS.map((item) => {
+          const active = isNavActive(route, item.route);
+          return (
+            <button
+              key={item.route}
+              type="button"
+              className={active ? 'is-active' : ''}
+              onClick={() => navigate(item.route)}
+              aria-current={active ? 'page' : undefined}
+            >
+              <span className="shell-mobile-glyph" aria-hidden="true">{item.glyph}</span>
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
       </nav>
 
       <Modal open={settingsOpen} title="Palimpsest settings" onClose={() => setSettingsOpen(false)}>
