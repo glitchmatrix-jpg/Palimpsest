@@ -144,10 +144,12 @@ export default function FoolsJourney(){
     </div>
 
     <main className="journey-story">
-      {ACTS.map(act=><section className={`journey-act-break journey-act-break--${act.tone}`} key={act.label}>
-        <span>{act.label} · {act.range}</span><h2>{act.title}</h2><p>{act.short}</p><i aria-hidden="true"/>
-      </section>)}
-      {MAJORS.map(card=><JourneyScene key={card.number} card={card} isActive={active===card.index} onOpen={setSelected}/>)}
+      {ACTS.map(act=><div className={`journey-act-group journey-act-group--${act.tone}`} key={act.label}>
+        <section className={`journey-act-break journey-act-break--${act.tone}`}>
+          <span>{act.label} · {act.range}</span><h2>{act.title}</h2><p>{act.short}</p><i aria-hidden="true"/>
+        </section>
+        {MAJORS.filter(card=>card.index>=act.from&&card.index<=act.to).map(card=><JourneyScene key={card.number} card={card} isActive={active===card.index} onOpen={setSelected}/>)}
+      </div>)}
     </main>
 
     <footer className="journey-ending">
