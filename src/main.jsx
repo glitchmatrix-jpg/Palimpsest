@@ -18,6 +18,7 @@ import './styles/journey-performance.css';
 import './styles/read.css';
 import './styles/read-journal.css';
 import './styles/journal.css';
+import './styles/journal-detail.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
