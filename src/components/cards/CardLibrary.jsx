@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import TiltedCard from '../../vendor/react-bits/TiltedCard/TiltedCard';
-import { CARD_FILTERS, TAROT_CARDS } from '../../data/cardLibrary';
+import { CARD_FILTERS, TAROT_CARDS } from '../../data/tarotDataset';
 
 const asset = (path) => `${import.meta.env.BASE_URL}${path}`;
 
@@ -50,13 +50,9 @@ function CardDetail({ card, onClose }) {
 
   const reversed = orientation === 'reversed';
   const keywords = reversed ? card.reversed : card.upright;
-  const meaning = reversed ? card.reversedMeaning : card.meaning;
-  const guidance = reversed
-    ? `Notice where ${keywords[0]} may be asking for adjustment rather than judgment. Reversed cards usually modify an energy; they do not simply erase its upright meaning.`
-    : `Let ${keywords[0]} be practical. Ask what action, boundary or perspective would let this energy express itself cleanly in the situation you are considering.`;
-  const reflection = reversed
-    ? `Where might ${keywords[0]} be operating internally, indirectly or in excess right now?`
-    : `Where is ${keywords[0]} already present, and what would it look like to engage with it deliberately?`;
+  const meaning = reversed ? card.explanation.reversed : card.explanation.upright;
+  const guidance = reversed ? card.practicalGuidance.reversed : card.practicalGuidance.upright;
+  const questions = reversed ? card.questions.reversed : card.questions.upright;
 
   const modal = (
     <div
@@ -102,8 +98,8 @@ function CardDetail({ card, onClose }) {
             <p>{guidance}</p>
           </section>
           <section>
-            <span className="card-focus__label">Reflection</span>
-            <p className="card-focus__reflection">{reflection}</p>
+            <span className="card-focus__label">Questions</span>
+            <div className="card-focus__questions">{questions.map((question) => <p className="card-focus__reflection" key={question}>{question}</p>)}</div>
           </section>
         </div>
       </div>
@@ -123,7 +119,7 @@ export default function CardLibrary() {
     return TAROT_CARDS.filter((card) => {
       if (!matchesFilter(card, filter)) return false;
       if (!needle) return true;
-      const haystack = [card.name, card.arcana, card.suit, card.rank, ...(card.upright || []), ...(card.reversed || [])]
+      const haystack = [card.name, card.arcana, card.suit, card.rank, ...(card.upright || []), ...(card.reversed || []), ...(card.semanticThemes || [])]
         .filter(Boolean)
         .join(' ')
         .toLowerCase();
