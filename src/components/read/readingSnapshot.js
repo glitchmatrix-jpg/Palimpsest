@@ -1,0 +1,41 @@
+export function buildReadingSnapshot({analysis,entries,spread,spreadId,question,method,allowReversals,note=''}){
+  if(!analysis||!entries?.every(Boolean)) throw new Error('A complete reading is required before it can be saved.');
+  return {
+    spreadId,
+    spreadName:spread.name,
+    positions:[...spread.positions],
+    question:String(question||'').trim(),
+    drawMethod:method,
+    reversalsEnabled:Boolean(allowReversals),
+    note:String(note||''),
+    cards:entries.map((entry,index)=>({
+      id:entry.card.id,
+      name:entry.card.name,
+      image:entry.card.image,
+      arcana:entry.card.arcana,
+      suit:entry.card.suit||null,
+      rank:entry.card.rank||null,
+      orientation:entry.orientation,
+      position:spread.positions[index],
+      keywords:[...(analysis.cards?.[index]?.keywords||[])],
+      reading:analysis.cards?.[index]?.reading||'',
+      semanticThemes:[...(entry.card.semanticThemes||[])],
+      structure:entry.card.structure?{...entry.card.structure}:null,
+    })),
+    trajectory:analysis.trajectory||'',
+    summary:analysis.summary||'',
+    synthesis:[...(analysis.synthesis||[])],
+    relations:(analysis.relations||[]).map((relation)=>({
+      interesting:Boolean(relation.interesting),
+      type:relation.type||'',
+      strength:relation.strength??null,
+      axis:relation.axis||'',
+      text:relation.text||'',
+      evidence:Array.isArray(relation.evidence)?[...relation.evidence]:[],
+    })),
+    layers:(analysis.layers||[]).map((layer)=>({
+      id:layer.id||'',title:layer.title||'',lead:layer.lead||'',text:layer.text||'',evidence:Array.isArray(layer.evidence)?[...layer.evidence]:[],
+    })),
+    reflection:[...(analysis.reflection||[])],
+  };
+}
