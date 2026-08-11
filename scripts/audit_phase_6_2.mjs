@@ -128,7 +128,7 @@ for (const card of TAROT_CARDS) {
       assert(!FORBIDDEN.some((phrase) => reading.toLowerCase().includes(phrase.toLowerCase())), `${label}: contains deprecated template/disclaimer language`);
       assert(!OVERCLAIMS.some((pattern) => pattern.test(reading)), `${label}: contains deterministic or mind-reading language`);
       assert(POSITION_SIGNALS[position].some((pattern) => pattern.test(reading)), `${label}: position does not read distinctly enough as ${position}`);
-      assert(!/\b(\w+)\s+\1\b/i.test(normalized), `${label}: contains a doubled word`);
+      assert(!/\b(\w+)\s+\1\b/i.test(reading), `${label}: contains a doubled word`);
       assert(!/\s{2,}/.test(reading), `${label}: contains repeated whitespace`);
       assert(!/[.!?]{2,}/.test(reading), `${label}: contains malformed punctuation`);
 
@@ -158,7 +158,6 @@ for (const card of TAROT_CARDS) {
   }
 }
 
-// Upright and reversed must materially differ in every position.
 for (const card of TAROT_CARDS) {
   for (const position of SUPPORTED_POSITIONS) {
     const up = byKey.get(`${card.id}|upright|${position}`);
@@ -168,7 +167,6 @@ for (const card of TAROT_CARDS) {
   }
 }
 
-// Position readings for the same card/orientation should not collapse into near-duplicates.
 for (const card of TAROT_CARDS) {
   for (const orientation of ORIENTATIONS) {
     for (let i = 0; i < SUPPORTED_POSITIONS.length; i += 1) {
@@ -184,7 +182,6 @@ for (const card of TAROT_CARDS) {
   }
 }
 
-// Detect boilerplate sentences that dominate the corpus.
 const sentenceFrequency = new Map();
 for (const item of corpus) {
   for (const sentence of sentences(item.reading)) {
