@@ -1,0 +1,142 @@
+/* Phase 3 modal fix — render detail as a true viewport layer. */
+.card-focus {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 3vw, 32px);
+  overflow: hidden;
+  background: rgba(8, 4, 13, .68);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.card-focus__panel {
+  position: relative;
+  width: min(1120px, calc(100vw - 48px));
+  height: auto;
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+  display: grid;
+  grid-template-columns: minmax(280px, .82fr) minmax(360px, 1.18fr);
+  gap: clamp(34px, 5vw, 72px);
+  padding: clamp(30px, 4vw, 54px);
+  border-radius: 34px;
+}
+
+.card-focus__close {
+  position: sticky;
+  top: 0;
+  margin-left: auto;
+  float: right;
+  z-index: 20;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.card-focus__art-column,
+.card-focus__content {
+  min-width: 0;
+}
+
+.card-focus__content {
+  padding-top: 8px;
+}
+
+@media (max-width: 760px) {
+  .card-focus {
+    display: block;
+    padding: 0;
+    overflow: hidden;
+    background: rgba(8, 4, 13, .82);
+  }
+
+  .card-focus__panel {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    display: block;
+    padding:
+      calc(18px + env(safe-area-inset-top))
+      20px
+      calc(96px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .card-focus__close {
+    position: sticky;
+    top: 0;
+    float: right;
+    margin: 0 0 8px auto;
+    background: rgba(24, 14, 32, .92);
+  }
+
+  .card-focus__art-column {
+    clear: both;
+    padding-top: 2px;
+  }
+
+  .card-focus__eyebrow {
+    padding-right: 46px;
+  }
+
+  .card-focus h2 {
+    font-size: clamp(2.2rem, 12vw, 3.35rem);
+    line-height: .98;
+    margin-bottom: 20px;
+    padding-right: 0;
+  }
+
+  .card-focus__image-wrap {
+    width: min(68vw, 260px);
+    margin: 0 auto 26px;
+  }
+
+  .card-focus__content {
+    padding-top: 0;
+  }
+
+  .orientation-switch {
+    position: sticky;
+    top: 8px;
+    z-index: 10;
+    width: 100%;
+    margin: 0 0 18px;
+    background: rgba(24, 14, 32, .94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .orientation-switch button {
+    min-height: 44px;
+  }
+
+  .card-focus__keywords {
+    margin-bottom: 20px;
+  }
+
+  .card-focus__content section {
+    padding: 18px 0;
+  }
+}
+
+@media (max-width: 390px) {
+  .card-focus__panel {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .card-focus__image-wrap {
+    width: min(72vw, 245px);
+  }
+}
