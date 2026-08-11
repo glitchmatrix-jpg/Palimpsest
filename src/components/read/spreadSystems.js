@@ -16,13 +16,17 @@ function relationPhrase(relation) {
   const axis = clean(relation.axis);
   if (!axis) return '';
   const type = relation.type || 'relationship';
-  if (type === 'mismatch' || type === 'contradiction') return `The strongest tension is ${axis}`;
-  if (type === 'correction') return `The clearest corrective movement is ${axis}`;
-  if (type === 'reinforcement') return `The cards reinforce ${axis}`;
-  if (type === 'cause → effect') return `The strongest causal link is ${axis}`;
-  if (type === 'escalation') return `The pressure intensifies through ${axis}`;
-  if (type === 'Major ↔ Minor') return `The same issue moves between a larger principle and lived reality through ${axis}`;
-  return `The strongest direct link is ${axis}`;
+  if (type === 'mismatch' || type === 'contradiction') return `the clearest tension is ${axis}`;
+  if (type === 'correction') return `the second card corrects the first through ${axis}`;
+  if (type === 'reinforcement') return `the two cards reinforce ${axis}`;
+  if (type === 'cause → effect') return `the strongest causal movement is ${axis}`;
+  if (type === 'escalation') return `the pressure intensifies through ${axis}`;
+  if (type === 'Major ↔ Minor') return `the issue moves between a larger principle and lived reality through ${axis}`;
+  return `the strongest direct link is ${axis}`;
+}
+
+function cue(card) {
+  return clean(card?.cue) || clean(card?.keyword) || 'a meaningful shift';
 }
 
 function pastPresentFuture(cards, relations, question) {
@@ -30,24 +34,24 @@ function pastPresentFuture(cards, relations, question) {
   const [intoPresent, intoFuture] = relations;
   const lead = questionLead(question);
 
-  let p1 = `${lead}${past.card.name} places ${past.keyword} in the background of the story, while ${present.card.name} makes ${present.keyword} the condition that is active now. `;
+  let p1 = `${lead}the spread begins with ${past.card.name} as background and ${present.card.name} as the present hinge. That gives you a useful distinction: ${cue(past)} belongs to what has already shaped your expectations, while ${cue(present)} is what actually needs to be handled now.`;
   if (isInteresting(intoPresent)) {
-    p1 += `${relationPhrase(intoPresent)}. That means the past matters here because it helps explain the shape the present has taken, not simply because it happened first.`;
+    p1 += ` Between those two cards, ${relationPhrase(intoPresent)}. That makes the past relevant because something about it is still feeding the present.`;
   } else {
-    p1 += `There is no strong enough direct link to claim that one caused the other, so treat the past as context and judge the present on its own evidence.`;
+    p1 += ` The cards do not justify saying the past directly caused the present, so keep the first card as context rather than turning sequence into causation.`;
   }
 
-  let p2 = `${present.card.name} is the hinge of this spread. `;
+  let p2 = `${future.card.name} then changes the reading from explanation to direction. Its role is to show what becomes more relevant if the current pattern continues: ${cue(future)}.`;
   if (isInteresting(intoFuture)) {
-    p2 += `${relationPhrase(intoFuture)}. ${future.card.name} therefore reads as a development emerging from what is active now, not as an isolated prediction.`;
+    p2 += ` Here, ${relationPhrase(intoFuture)}. That gives the future card a real bridge from the present rather than leaving it as a detached prediction.`;
   } else {
-    p2 += `${future.card.name} still gives the direction ahead through ${future.keyword}, but the cards do not justify pretending there is a neat causal bridge from the present to that outcome.`;
+    p2 += ` There is no strong pair link from the present, so read it as a possibility to watch for rather than an outcome the cards have proven.`;
   }
 
-  const p3 = `Put simply: something shaped by ${past.keyword} has brought you to a present organized around ${present.keyword}. If the current pattern continues, ${future.keyword} becomes increasingly relevant. The useful question is not “will ${future.card.name} happen?” but “what in the present is making that direction more or less likely?”`;
+  const p3 = `The practical reading is this: identify what the past taught you that is still useful, separate it from what is merely familiar, and judge the future by what the present is actually reinforcing. The future card matters most as an early-warning signal—you can notice the direction before it becomes the only direction available.`;
 
   return {
-    summary: `${past.keyword} shaped the background; ${present.keyword} is active now; ${future.keyword} is the direction to watch if the current pattern continues.`,
+    summary: `${past.card.name} explains the background, ${present.card.name} shows the active hinge, and ${future.card.name} describes the direction to watch—not a guaranteed outcome.`,
     synthesis: [p1,p2,p3],
   };
 }
@@ -57,24 +61,24 @@ function situationChallengeAdvice(cards, relations, question) {
   const [intoChallenge, intoAdvice] = relations;
   const lead = questionLead(question);
 
-  let p1 = `${lead}${situation.card.name} says the situation is fundamentally about ${situation.keyword}; ${challenge.card.name} says the difficulty is ${challenge.keyword}. `;
+  let p1 = `${lead}${situation.card.name} and ${challenge.card.name} separate the problem from the thing making it difficult. The situation is organized around ${cue(situation)}; the friction comes from ${cue(challenge)}. That distinction matters because solving the visible situation will not help much if the challenge keeps recreating the same difficulty.`;
   if (isInteresting(intoChallenge)) {
-    p1 += `${relationPhrase(intoChallenge)}. This is useful because it tells you how the basic situation turns into friction rather than treating the Challenge card as a second, unrelated problem.`;
+    p1 += ` In this pair, ${relationPhrase(intoChallenge)}.`;
   } else {
-    p1 += `The two cards do not form a strong direct relationship, so do not force the challenge to be “caused” by the situation. It may be a separate pressure that still has to be handled.`;
+    p1 += ` They do not form a strong direct pair, so the challenge may be an independent pressure rather than a consequence of the situation itself.`;
   }
 
-  let p2 = `${advice.card.name} shifts the reading from diagnosis to response: ${advice.keyword} is what you are being asked to try, practice, protect or change. `;
+  let p2 = `${advice.card.name} is where the spread becomes useful rather than descriptive. It points toward ${cue(advice)} as the response worth testing.`;
   if (isInteresting(intoAdvice)) {
-    p2 += `${relationPhrase(intoAdvice)}. The advice earns its place because it answers something specific in the difficulty rather than offering a generic positive quality.`;
+    p2 += ` The reason it fits is that ${relationPhrase(intoAdvice)}.`;
   } else {
-    p2 += `There is no strong pair link tying it neatly to the Challenge card, so use the advice on its own terms and judge whether it actually improves the situation in practice.`;
+    p2 += ` The cards do not give it a neat symbolic bridge from the Challenge card, so judge the advice by whether it changes the actual conditions rather than whether it sounds thematically elegant.`;
   }
 
-  const p3 = `Put simply: name ${situation.keyword} accurately, stop treating ${challenge.keyword} as a side issue, and test ${advice.keyword} as the response. This spread is useful only if the advice changes what you do, not merely how elegantly you can describe the problem.`;
+  const p3 = `Put the spread into action by asking three separate questions: What is true about the situation? What specifically is making it harder? What would I do differently if I took the Advice card seriously for one concrete decision? If the third answer does not change behavior, the reading has not yet reached the useful part.`;
 
   return {
-    summary: `The situation centers on ${situation.keyword}; ${challenge.keyword} is the friction; ${advice.keyword} is the response to test.`,
+    summary: `${situation.card.name} diagnoses the situation, ${challenge.card.name} isolates the friction, and ${advice.card.name} gives you something concrete to test.`,
     synthesis: [p1,p2,p3],
   };
 }
@@ -86,29 +90,24 @@ function mindBodySpirit(cards, relations, question) {
 
   let p1;
   if (isInteresting(mindBody) && ['mismatch','contradiction'].includes(mindBody.type)) {
-    p1 = `${lead}The first thing that stands out is a mismatch between how you are trying to understand the situation and what your lived reality is showing you. ${mind.card.name} puts ${mind.keyword} in the Mind position; ${body.card.name} puts ${body.keyword} in the Body position. ${relationPhrase(mindBody)}. In plain terms, your mental strategy may be asking one thing of you while your actual capacity, habits or behaviour are reporting something else.`;
+    p1 = `${lead}the first thing to notice is that your mental strategy and your lived reality are not saying the same thing. ${mind.card.name} shows ${cue(mind)} in the way you are interpreting events, while ${body.card.name} shows ${cue(body)} in what your routines, energy or behavior are actually reporting. ${relationPhrase(mindBody)}. In practice, that means your explanation of the situation may need to catch up with the evidence of living it.`;
   } else if (isInteresting(mindBody) && mindBody.type === 'reinforcement') {
-    p1 = `${lead}Your thinking and lived reality appear to be reinforcing the same pattern. ${mind.card.name} frames the issue through ${mind.keyword}, and ${body.card.name} shows ${body.keyword} in what you are actually living. ${relationPhrase(mindBody)}. That makes this harder to dismiss as “just in your head” or “just circumstances”; the pattern is showing up at both levels.`;
+    p1 = `${lead}your thinking and lived reality are pointing in the same direction. ${mind.card.name} frames the issue through ${cue(mind)}, and ${body.card.name} shows ${cue(body)} in daily life. ${relationPhrase(mindBody)}. Because the same pattern appears at both levels, it deserves more weight than a passing mood or one bad day.`;
   } else {
-    p1 = `${lead}${mind.card.name} shows a mental approach built around ${mind.keyword}, while ${body.card.name} shows ${body.keyword} in lived reality. The cards do not prove those two levels are aligned. Compare what you believe is happening with what your energy, routines, choices and actual circumstances are showing you.`;
+    p1 = `${lead}${mind.card.name} and ${body.card.name} ask you to compare the story in your head with the evidence of daily life. Your thinking is organized around ${cue(mind)}, while your lived conditions show ${cue(body)}. The cards do not prove those two levels match, so the useful move is to compare belief with behavior instead of assuming one explains the other.`;
   }
 
-  let p2 = `${spirit.card.name} changes the scale of the reading. The Spirit position is not asking for another description of the problem; it asks what ${spirit.keyword} means for your values, identity or definition of a life that actually fits you. `;
+  let p2 = `${spirit.card.name} then changes the scale of the reading. Rather than asking how to manage the immediate pattern better, it asks what ${cue(spirit)} means for the values, identity or standards you want to live by.`;
   if (isInteresting(bodySpirit)) {
-    p2 += `${relationPhrase(bodySpirit)}. That suggests the practical reality is pushing you toward a deeper reconsideration rather than merely demanding better coping.`;
+    p2 += ` Here, ${relationPhrase(bodySpirit)}. That suggests the practical reality is pressing on a deeper question rather than merely asking for better coping.`;
   } else {
-    p2 += `There is no strong direct bridge from the Body card, so let this deeper question stand on its own instead of manufacturing a lesson from adjacency.`;
+    p2 += ` There is no strong direct bridge from Body to Spirit, so let the deeper question stand on its own instead of inventing a lesson just because the cards are adjacent.`;
   }
 
-  let p3;
-  if (isInteresting(mindBody) && mindBody.type === 'mismatch') {
-    p3 = `Put simply: your mind wants ${mind.keyword}, your lived experience is showing ${body.keyword}, and the deeper task is ${spirit.keyword}. The reading is asking whether the mental system you are trying to maintain still fits the life you are actually living — and whether ${spirit.keyword} requires you to revise that system rather than simply endure it better.`;
-  } else {
-    p3 = `Put simply: compare ${mind.keyword} as the story in your head with ${body.keyword} as the evidence of daily life, then ask what ${spirit.keyword} requires at the level of values. The useful insight is whatever becomes clearer when belief, lived reality and meaning are read together instead of treated as three separate topics.`;
-  }
+  const p3 = `Put simply, this spread is asking for alignment. What you believe, what you can actually sustain, and what you consider worth building your life around should not be three unrelated answers. The most useful insight is the place where one of those layers is forcing the other two to change.`;
 
   return {
-    summary: `Your mind is working through ${mind.keyword}; your lived reality shows ${body.keyword}; underneath both is a deeper question about ${spirit.keyword}.`,
+    summary: `${mind.card.name} shows the mental strategy, ${body.card.name} shows the lived evidence, and ${spirit.card.name} asks what the situation means at the level of values or identity.`,
     synthesis: [p1,p2,p3],
   };
 }
@@ -118,24 +117,24 @@ function youThemRelationship(cards, relations, question) {
   const [betweenPeople, intoPattern] = relations;
   const lead = questionLead(question);
 
-  let p1 = `${lead}${you.card.name} describes the stance you are bringing through ${you.keyword}. ${them.card.name} describes ${them.keyword} only as an observable stance on the other side — what their behaviour, choices, communication or avoidance appears to show. `;
+  let p1 = `${lead}this spread is best read as two observable contributions meeting each other. ${you.card.name} puts ${cue(you)} on your side; ${them.card.name} puts ${cue(them)} on the other side. Neither card needs to be a complete description of a person—they describe what each side is currently adding to the exchange.`;
   if (isInteresting(betweenPeople)) {
-    p1 += `${relationPhrase(betweenPeople)}. That gives you a useful point of comparison between the two sides without pretending the cards reveal anyone's private thoughts.`;
+    p1 += ` Between those two contributions, ${relationPhrase(betweenPeople)}.`;
   } else {
-    p1 += `There is no strong direct relationship between those two cards, so do not force the two people into a neat opposition or compatibility story.`;
+    p1 += ` There is no strong symbolic pair between them, so keep them as separate contributions instead of inventing a compatibility story.`;
   }
 
-  let p2 = `${relationship.card.name} is the most important card for judging the connection itself. It says the interaction is producing a pattern of ${relationship.keyword}; that pattern is different from either person's individual intentions. `;
+  let p2 = `${relationship.card.name} matters most when judging the connection itself. It points to ${cue(relationship)} as the pattern the interaction is creating, which is different from either person’s private intention.`;
   if (isInteresting(intoPattern)) {
-    p2 += `${relationPhrase(intoPattern)}. This is where an individual stance appears to feed into the relationship climate strongly enough to matter.`;
+    p2 += ` The second side feeds into that pattern strongly enough that ${relationPhrase(intoPattern)}.`;
   } else {
-    p2 += `The other person's card does not form a strong enough direct link to claim it creates the relationship pattern by itself; the dynamic belongs to the interaction between both sides.`;
+    p2 += ` The cards do not justify blaming that pattern on the other person alone; it belongs to the system created when both sides meet.`;
   }
 
-  const p3 = `Put simply: you are bringing ${you.keyword}, the other side appears to be bringing ${them.keyword}, and together the connection is producing ${relationship.keyword}. The practical question is not “who secretly feels what?” but “what repeated interaction creates this pattern, and what can you change on your side without requiring the other person to become someone different first?”`;
+  const p3 = `The useful reading is therefore not “who secretly feels what?” It is: what are you contributing, what can you actually observe from the other side, and what does the relationship keep producing regardless of intention? If you want the connection to change, start with the part of that system you can alter directly—your pacing, communication, boundaries, expectations or willingness to name the pattern out loud.`;
 
   return {
-    summary: `You are bringing ${you.keyword}; the other side appears to bring ${them.keyword}; the relationship itself is producing ${relationship.keyword}.`,
+    summary: `${you.card.name} describes your contribution, ${them.card.name} describes the other side only through observable behavior, and ${relationship.card.name} shows the pattern the connection itself is producing.`,
     synthesis: [p1,p2,p3],
   };
 }
@@ -148,7 +147,11 @@ export function buildSpreadSystem(cards, relations, positions, question='') {
   if (key === 'You|Them|Relationship') return youThemRelationship(cards, relations, question);
 
   return {
-    summary: cards.map((card) => `${card.position}: ${card.keyword}`).join(' · '),
-    synthesis: [`Read each card in its position first.`, `Use only relationships that are strong enough to add information.`, `Then decide what the spread changes about your understanding or next action.`],
+    summary: cards.map((card) => `${card.position}: ${card.card.name}`).join(' · '),
+    synthesis: [
+      'Read each card in its position first.',
+      'Use only relationships that are strong enough to add information.',
+      'Then decide what the spread changes about your understanding or next action.',
+    ],
   };
 }
