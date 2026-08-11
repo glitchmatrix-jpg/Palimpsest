@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import TiltedCard from '../../vendor/react-bits/TiltedCard/TiltedCard';
 import { CARD_FILTERS, TAROT_CARDS } from '../../data/cardLibrary';
 
@@ -28,20 +29,30 @@ function CardTile({ card, onOpen }) {
 function CardDetail({ card, onClose }) {
   const [orientation, setOrientation] = useState('upright');
   const closeRef = useRef(null);
+  const panelRef = useRef(null);
 
   useEffect(() => {
     const oldOverflow = document.body.style.overflow;
+    const oldOverscroll = document.body.style.overscrollBehavior;
     document.body.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
     closeRef.current?.focus();
+
     const onKey = (event) => {
       if (event.key === 'Escape') onClose();
     };
+
     window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = oldOverflow;
+      document.body.style.overscrollBehavior = oldOverscroll;
       window.removeEventListener('keydown', onKey);
     };
   }, [onClose]);
+
+  useEffect(() => {
+    panelRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+  }, [card]);
 
   const reversed = orientation === 'reversed';
   const keywords = reversed ? card.reversed : card.upright;
@@ -53,10 +64,19 @@ function CardDetail({ card, onClose }) {
     ? `Where might ${keywords[0]} be operating internally, indirectly or in excess right now?`
     : `Where is ${keywords[0]} already present, and what would it look like to engage with it deliberately?`;
 
-  return (
-    <div className="card-focus" role="dialog" aria-modal="true" aria-labelledby="card-focus-title" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <div className="card-focus__panel">
+  const dialog = (
+    <div
+      className="card-focus"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="card-focus-title"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className="card-focus__panel" ref={panelRef}>
         <button ref={closeRef} className="card-focus__close" type="button" onClick={onClose} aria-label="Close card detail">×</button>
+
         <div className="card-focus__art-column">
           <p className="card-focus__eyebrow">{card.arcana === 'Major' ? `Major Arcana · ${card.number}` : `${card.suit} · ${card.rank}`}</p>
           <h2 id="card-focus-title">{card.name}</h2>
@@ -95,6 +115,8 @@ function CardDetail({ card, onClose }) {
       </div>
     </div>
   );
+
+  return createPortal(dialog, document.body);
 }
 
 export default function CardLibrary() {
@@ -107,7 +129,10 @@ export default function CardLibrary() {
     return TAROT_CARDS.filter((card) => {
       if (!matchesFilter(card, filter)) return false;
       if (!needle) return true;
-      const haystack = [card.name, card.arcana, card.suit, card.rank, ...(card.upright || []), ...(card.reversed || [])].filter(Boolean).join(' ').toLowerCase();
+      const haystack = [card.name, card.arcana, card.suit, card.rank, ...(card.upright || []), ...(card.reversed || [])]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
       return haystack.includes(needle);
     });
   }, [filter, query]);
@@ -129,7 +154,7 @@ export default function CardLibrary() {
         </div>
 
         <div className="library-count" aria-live="polite">
-          <span>{String(visible.length).padStart(2,'0')}</span>
+          <span>{String(visible.length).padStart(2, '0')}</span>
           <span>{filter === 'All' ? 'cards visible' : `${filter.toLowerCase()} cards`}</span>
         </div>
       </div>
